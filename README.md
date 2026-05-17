@@ -90,16 +90,112 @@ skillnexora/
 
 ## Want to Contribute?
 
-We welcome all contributors — beginners welcome! 🙌
+## 🤝 Contributing Guide
 
-1. Look for issues labeled `good first issue`
-2. Comment that you want to work on it
-3. Fork → make changes → open PR
+We welcome contributions from beginners 💙
 
-Read [CONTRIBUTING.md](CONTRIBUTING.md) before you start.
+### 🔰 Steps to Contribute
+
+1. Go to the **Issues** section
+2. Choose an issue to work on
+3. Comment to get assigned
+4. Fork the repository
+5. Create a new branch
+
+```
+git checkout -b feature/your-feature-name
+```
+
+6. Make your changes
+7. Commit changes
+
+```
+git commit -m "Added: your feature name"
+```
+
+8. Push to GitHub
+
+```
+git push origin feature/your-feature-name
+```
+
+9. Create a Pull Request 🎉
 
 ---
 
-## License
+## 📌 Contribution Guidelines
 
-MIT License
+* ✅ Keep code clean and readable
+* ✅ Follow proper folder structure
+* ✅ Make components responsive
+* ✅ Use meaningful commit messages
+* ✅ Avoid breaking existing UI
+* ✅ Add comments where necessary
+
+---
+
+## 🧩 Contribution Areas
+
+
+### 🎨 UI Improvements
+
+* Improve responsiveness
+* Add animations
+* Enhance UX/UI
+* Improve mobile experience
+
+---
+
+### ⚙️ Features
+
+* Add new component pages
+* Improve code preview system
+* Add dark mode 🌙
+* Improve sidebar navigation
+* Add search functionality
+
+---
+
+## 🏷️ Issue Labels
+
+* `good first issue` → Beginner-friendly
+* `enhancement` → Feature request
+* `bug` → Bug fixes
+* `documentation` → Docs improvements
+
+---
+
+## 💡 Example Contributions
+
+* Create a responsive navbar
+* Add hover effects to cards
+* Improve mobile layout
+* Add new UI components
+
+---
+
+## 🎯 Project Goals
+
+* Help beginners start open-source contributions
+* Build a large UI component library
+* Create a developer-friendly UI showcase platform
+
+---
+
+## ⭐ Support
+
+If you like this project:
+
+* Give it a ⭐
+* Share it with others
+* Contribute 🚀
+
+## 👨‍💻 Maintainer
+
+**Project Admin:** Deepika Gandla
+
+---
+
+<h2 align="center"> 💙 Happy Coding & Contributing! </h2>
+
+---
