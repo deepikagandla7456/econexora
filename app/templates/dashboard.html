@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}Dashboard - SkillNexora{% endblock %}
+
+{% block content %}
+<div class="dashboard">
+  <h2>Hey {{ current_user.username }} 👋</h2>
+
+  <div class="stats-row">
+    <div class="stat-card">
+      <span class="stat-num">{{ streak.current_streak if streak else 0 }}</span>
+      <span class="stat-label">🔥 Day Streak</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-num">{{ learnings|length }}</span>
+      <span class="stat-label">📚 Recent Entries</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-num">{{ badges|length }}</span>
+      <span class="stat-label">🏆 Badges Earned</span>
+    </div>
+  </div>
+
+  <div class="dashboard-grid">
+    <div class="dash-section">
+      <h3>Recent Learning</h3>
+      {% if learnings %}
+        {% for entry in learnings %}
+          <div class="entry-row">
+            <span class="entry-title">{{ entry.title }}</span>
+            <span class="entry-platform">{{ entry.platform }}</span>
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: {{ entry.progress }}%"></div>
+            </div>
+            <span class="entry-progress">{{ entry.progress }}%</span>
+          </div>
+        {% endfor %}
+        <a href="{{ url_for('learning.learn') }}" class="btn btn-secondary">View All</a>
+      {% else %}
+        <p class="empty-msg">No entries yet. <a href="{{ url_for('learning.learn') }}">Add your first learning!</a></p>
+      {% endif %}
+    </div>
+
+    <div class="dash-section">
+      <h3>Your Skill Profile</h3>
+      <pre class="skill-profile">{{ skill_profile }}</pre>
+    </div>
+  </div>
+
+  <div class="quick-actions">
+    <h3>Quick Actions</h3>
+    <div class="action-buttons">
+      <a href="{{ url_for('learning.learn') }}" class="btn btn-primary">+ Add Learning</a>
+      <a href="{{ url_for('post.generate') }}" class="btn btn-primary">✍️ Generate Post</a>
+      <a href="{{ url_for('outreach.cold_outreach') }}" class="btn btn-primary">📩 Cold Outreach</a>
+      <a href="{{ url_for('streak.streak_page') }}" class="btn btn-secondary">🔥 View Streak</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

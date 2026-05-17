@@ -1,0 +1,51 @@
+name: ✨ Feature Request
+description: Got an idea to make SkillNexora better?
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: We love new ideas! Tell us what you want.
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem does this solve?
+      placeholder: e.g. "I can't schedule my posts."
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: What do you want to add?
+      placeholder: e.g. "A calendar to pick a posting date."
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why is this useful?
+      placeholder: e.g. "Users can plan content and stay consistent."
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Which part of the app?
+      options:
+        - Learning Tracker
+        - Post Generator
+        - Cold Outreach
+        - Streak & Badges
+        - New Feature
+        - Other
+    validations:
+      required: true
+  - type: dropdown
+    id: difficulty
+    attributes:
+      label: How hard do you think this is?
+      options:
+        - Easy (small UI change)
+        - Medium (new page or logic)
+        - Hard (new system or integration)
+        - Not sure

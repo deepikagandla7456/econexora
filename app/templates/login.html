@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Login - SkillNexora{% endblock %}
+
+{% block content %}
+<div class="auth-box">
+  <h2>Welcome back 👋</h2>
+  <form method="POST" action="{{ url_for('auth.login') }}">
+    <div class="form-group">
+      <label>Email</label>
+      <input type="email" name="email" placeholder="your@email.com" required />
+    </div>
+    <div class="form-group">
+      <label>Password</label>
+      <input type="password" name="password" placeholder="your password" required />
+    </div>
+    <button type="submit" class="btn btn-primary btn-full">Login</button>
+  </form>
+  <p class="auth-link">Don't have an account? <a href="{{ url_for('auth.signup') }}">Sign Up</a></p>
+</div>
+{% endblock %}

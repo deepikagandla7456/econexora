@@ -1,0 +1,41 @@
+name: 🌱 Good First Issue
+description: A beginner-friendly task — new contributors start here!
+title: "[Good First Issue]: "
+labels: ["good first issue"]
+body:
+  - type: markdown
+    attributes:
+      value: This is a beginner-friendly task. We'll help you along the way!
+  - type: textarea
+    id: task
+    attributes:
+      label: What needs to be done?
+      placeholder: e.g. "Add a character counter below the post textbox."
+    validations:
+      required: true
+  - type: textarea
+    id: where
+    attributes:
+      label: Where in the code?
+      placeholder: e.g. "app/templates/post.html"
+    validations:
+      required: false
+  - type: textarea
+    id: hints
+    attributes:
+      label: Hints for the contributor
+      placeholder: e.g. "Add a small JS snippet below the textarea."
+    validations:
+      required: false
+  - type: dropdown
+    id: skill
+    attributes:
+      label: What skill is needed?
+      options:
+        - HTML / CSS only
+        - Basic Python / Flask
+        - Basic JavaScript
+        - Both HTML and Python
+        - No coding (docs only)
+    validations:
+      required: true
