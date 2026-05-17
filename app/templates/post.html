@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}Post Generator - SkillNexora{% endblock %}
+
+{% block content %}
+<div class="page">
+  <h2>✍️ AI Post Generator</h2>
+  <p class="subtitle">Generate LinkedIn or Twitter posts based on what you've learned.</p>
+
+  <div class="two-col">
+    <div class="card">
+      <h3>Generate a Post</h3>
+      <form method="POST" action="{{ url_for('post.generate') }}">
+        <div class="form-group">
+          <label>Choose Platform</label>
+          <div class="platform-select">
+            <label class="radio-card">
+              <input type="radio" name="platform" value="linkedin" checked />
+              <span>LinkedIn<br/><small>Professional story style</small></span>
+            </label>
+            <label class="radio-card">
+              <input type="radio" name="platform" value="twitter" />
+              <span>X / Twitter<br/><small>Short punchy thread</small></span>
+            </label>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary btn-full">✨ Generate Post</button>
+      </form>
+
+      {% if generated %}
+        <div class="generated-box">
+          <div class="generated-header">
+            <h4>{% if platform == 'linkedin' %}LinkedIn Post{% else %}Twitter Thread{% endif %}</h4>
+            <button onclick="copyText('generated-post')" class="btn btn-small">📋 Copy</button>
+          </div>
+          <pre id="generated-post" class="generated-text">{{ generated }}</pre>
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="entries-list">
+      <h3>Past Generated Posts</h3>
+      {% if past_posts %}
+        {% for p in past_posts %}
+          <div class="entry-card">
+            <div class="entry-header">
+              <strong>{{ '🔵 LinkedIn' if p.platform == 'linkedin' else '🐦 Twitter' }}</strong>
+              <small>{{ p.created_at.strftime('%d %b %Y') }}</small>
+            </div>
+            <pre class="past-post-text">{{ p.content[:200] }}{% if p.content|length > 200 %}...{% endif %}</pre>
+          </div>
+        {% endfor %}
+      {% else %}
+        <p class="empty-msg">No posts generated yet.</p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<script>
+function copyText(id) {
+  const text = document.getElementById(id).innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    alert("Copied to clipboard!");
+  });
+}
+</script>
+{% endblock %}

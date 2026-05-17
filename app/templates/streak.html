@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Streak & Badges - SkillNexora{% endblock %}
+
+{% block content %}
+<div class="page">
+  <h2>🔥 Streak & Badges</h2>
+  <p class="subtitle">Stay consistent. Earn badges. Build your public proof.</p>
+
+  <!-- Streak Stats -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <span class="stat-num">{{ streak.current_streak if streak else 0 }}</span>
+      <span class="stat-label">🔥 Current Streak</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-num">{{ streak.longest_streak if streak else 0 }}</span>
+      <span class="stat-label">⚡ Longest Streak</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-num">{{ total_entries }}</span>
+      <span class="stat-label">📚 Total Entries</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-num">{{ completed }}</span>
+      <span class="stat-label">✅ Completed</span>
+    </div>
+  </div>
+
+  <!-- Badges -->
+  <div class="section">
+    <h3>Your Badges</h3>
+    <div class="badges-grid">
+      {% for b in badge_status %}
+        <div class="badge-card {% if b.earned %}earned{% else %}locked{% endif %}">
+          <span class="badge-icon">{{ b.icon if b.earned else '🔒' }}</span>
+          <span class="badge-name">{{ b.name }}</span>
+          <span class="badge-desc">{{ b.description }}</span>
+          {% if b.earned %}
+            <span class="badge-status earned-label">✅ Earned</span>
+          {% else %}
+            <span class="badge-status locked-label">Locked</span>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- How to earn -->
+  <div class="section card">
+    <h3>How to earn badges</h3>
+    <ul class="tip-list">
+      <li>🔥 <strong>7-Day Streak</strong> — Log a learning entry every day for 7 days</li>
+      <li>📚 <strong>Course Champion</strong> — Mark 5 courses as 100% complete</li>
+      <li>🏆 <strong>First Post</strong> — Generate your first LinkedIn or Twitter post</li>
+      <li>💼 <strong>First DM</strong> — Generate your first cold outreach message</li>
+    </ul>
+    <a href="{{ url_for('learning.learn') }}" class="btn btn-primary">+ Log Learning Today</a>
+  </div>
+</div>
+{% endblock %}

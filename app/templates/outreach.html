@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block title %}Cold Outreach - SkillNexora{% endblock %}
+
+{% block content %}
+<div class="page">
+  <h2>📩 Cold Outreach Generator</h2>
+  <p class="subtitle">Get a personalized cold DM and follow-up based on your real skills.</p>
+
+  <div class="two-col">
+    <div class="card">
+      <h3>Generate Outreach</h3>
+      <form method="POST" action="{{ url_for('outreach.cold_outreach') }}">
+        <div class="form-group">
+          <label>Target Role <span class="required">*</span></label>
+          <input type="text" name="target_role" placeholder="e.g. AI Engineer, Data Scientist" required />
+        </div>
+        <div class="form-group">
+          <label>Target Company <span class="required">*</span></label>
+          <input type="text" name="target_company" placeholder="e.g. Google, Infosys, Startup XYZ" required />
+        </div>
+        <button type="submit" class="btn btn-primary btn-full">📩 Generate Outreach</button>
+      </form>
+
+      {% if cold_dm %}
+        <div class="generated-box">
+          <div class="generated-header">
+            <h4>Cold DM (Send this first)</h4>
+            <button onclick="copyText('cold-dm')" class="btn btn-small">📋 Copy</button>
+          </div>
+          <pre id="cold-dm" class="generated-text">{{ cold_dm }}</pre>
+        </div>
+
+        <div class="generated-box">
+          <div class="generated-header">
+            <h4>Follow-up (Send after 4 days)</h4>
+            <button onclick="copyText('followup')" class="btn btn-small">📋 Copy</button>
+          </div>
+          <pre id="followup" class="generated-text">{{ followup }}</pre>
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="entries-list">
+      <h3>Past Outreach</h3>
+      {% if past %}
+        {% for item in past %}
+          <div class="entry-card">
+            <div class="entry-header">
+              <strong>{{ item.target_role }}</strong>
+              <span class="badge-tag">{{ item.target_company }}</span>
+            </div>
+            <small>{{ item.created_at.strftime('%d %b %Y') }}</small>
+            <pre class="past-post-text">{{ item.cold_dm[:150] }}...</pre>
+          </div>
+        {% endfor %}
+      {% else %}
+        <p class="empty-msg">No outreach generated yet.</p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<script>
+function copyText(id) {
+  const text = document.getElementById(id).innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    alert("Copied to clipboard!");
+  });
+}
+</script>
+{% endblock %}

@@ -1,0 +1,48 @@
+name: 🐛 Bug Report
+description: Something is broken? Tell us!
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for reporting! Fill this out so we can fix it fast.
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What went wrong?
+      placeholder: e.g. "Post generator showed a blank page."
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: "1. Go to... 2. Click... 3. See error"
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What should have happened?
+      placeholder: e.g. "A LinkedIn post should have appeared."
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Which part of the app?
+      options:
+        - Learning Tracker
+        - Post Generator
+        - Cold Outreach
+        - Streak & Badges
+        - Login / Signup
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots (if any)
+    validations:
+      required: false

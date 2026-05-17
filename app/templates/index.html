@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}SkillNexora - Track. Learn. Get Noticed.{% endblock %}
+
+{% block content %}
+<div class="hero">
+  <h1>SkillNexora 🚀</h1>
+  <p>Track your learning. Generate posts. Get noticed by hiring managers.</p>
+  <div class="hero-buttons">
+    <a href="{{ url_for('auth.signup') }}" class="btn btn-primary">Get Started Free</a>
+    <a href="{{ url_for('auth.login') }}" class="btn btn-secondary">Login</a>
+    <a href="{{ url_for('auth.demo') }}" class="btn btn-demo">👀 Preview Demo</a>
+  </div>
+  <p class="demo-note">No account needed — explore with sample data</p>
+
+  <div class="features-grid">
+    <a href="{{ url_for('auth.signup') }}" class="feature-card feature-link">
+      <span class="feature-icon">📚</span>
+      <h3>Track Learning</h3>
+      <p>Log courses, videos, blogs and books. Build your skill profile automatically.</p>
+    </a>
+    <a href="{{ url_for('auth.signup') }}" class="feature-card feature-link">
+      <span class="feature-icon">✍️</span>
+      <h3>Generate Posts</h3>
+      <p>AI writes LinkedIn and Twitter posts based on what you actually learned.</p>
+    </a>
+    <a href="{{ url_for('auth.signup') }}" class="feature-card feature-link">
+      <span class="feature-icon">📩</span>
+      <h3>Cold Outreach</h3>
+      <p>Personalized DMs to hiring managers based on your real skills.</p>
+    </a>
+    <a href="{{ url_for('auth.signup') }}" class="feature-card feature-link">
+      <span class="feature-icon">🔥</span>
+      <h3>Streak & Badges</h3>
+      <p>Stay consistent. Earn badges. Build a habit of learning daily.</p>
+    </a>
+  </div>
+</div>
+{% endblock %}
