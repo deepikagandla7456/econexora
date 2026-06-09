@@ -33,7 +33,7 @@ pip install -r requirements.txt
 
 Create a `.env` file (copy from `.env.example`):
 ```
-GEMINI_API_KEY=your_key_here
+GROQ_API_KEY=your_key_here
 SECRET_KEY=any_random_string
 ```
 
