@@ -5,10 +5,10 @@ from app.models import Badge, Learning
 streak = Blueprint("streak", __name__)
 
 ALL_BADGES = [
-    {"name": "7-Day Streak", "icon": "🔥", "description": "Logged learning 7 days in a row!"},
-    {"name": "Course Champion", "icon": "📚", "description": "Completed 5 courses!"},
-    {"name": "First Post", "icon": "🏆", "description": "Generated your first social media post!"},
-    {"name": "First DM", "icon": "💼", "description": "Sent your first cold outreach!"},
+    {"name": "7-Day Streak", "icon": "🔥", "description": "Logged carbon footprint activities 7 days in a row!"},
+    {"name": "Eco Champion", "icon": "🌿", "description": "Completed 5 offset goals!"},
+    {"name": "First Post", "icon": "🏆", "description": "Generated your first sustainability post!"},
+    {"name": "First DM", "icon": "💼", "description": "Generated your first climate outreach DM!"},
 ]
 
 

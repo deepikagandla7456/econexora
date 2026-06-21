@@ -24,50 +24,55 @@ def groq_chat(prompt):
 
 
 def build_skill_profile(learnings):
-    """Build a text summary of user's skills from their learning entries."""
+    """Build a summary of user's carbon footprint from their logs."""
     if not learnings:
-        return "No learning entries yet."
+        return "No carbon tracking entries yet."
 
-    skills_set = set()
-    topics = []
-    platforms = []
-    total_hours = 0
+    impact_tags = set()
+    categories = []
+    total_quantity = 0
+    total_emissions = 0.0
 
     for l in learnings:
         for s in l.skills.split(","):
-            skills_set.add(s.strip())
-        topics.append(l.topic)
-        platforms.append(l.platform)
-        total_hours += l.time_spent or 0
+            impact_tags.add(s.strip())
+        categories.append(l.platform)
+        total_quantity += l.time_spent or 0
+        try:
+            # Extract numerical emission value, e.g., "4.5 kg CO2" -> 4.5
+            val = float(l.topic.replace("kg CO2", "").replace("kg", "").strip())
+            total_emissions += val
+        except ValueError:
+            pass
 
     profile = f"""
-Skills: {', '.join(skills_set)}
-Topics studied: {', '.join(set(topics))}
-Platforms used: {', '.join(set(platforms))}
-Total learning hours: {round(total_hours, 1)}
-Number of resources: {len(learnings)}
+Eco Impact Tags: {', '.join(impact_tags)}
+Categories Logged: {', '.join(set(categories))}
+Total Activity Log Hours/Km: {round(total_quantity, 1)}
+Total CO2 Emissions: {round(total_emissions, 1)} kg CO2
+Number of Logs: {len(learnings)}
     """.strip()
 
     return profile
 
 
 def generate_post(skill_profile, platform):
-    """Generate a LinkedIn or Twitter post using Groq."""
+    """Generate a LinkedIn or Twitter/X post showing carbon footprint awareness using Groq."""
     if not get_groq_client():
         return "Error: GROQ_API_KEY not set. Please add it to your .env file."
 
     if platform == "linkedin":
         prompt = f"""
-You are a career coach helping a student write a LinkedIn post about their recent learning journey.
+You are a sustainability advocate helping an individual write a LinkedIn post about their carbon footprint tracking journey.
 
-Based on this skill profile:
+Based on this carbon footprint profile:
 {skill_profile}
 
 Write a professional LinkedIn post that:
-- Starts with a hook (not "I am excited to share")
-- Tells a short story about what they learned
-- Mentions 2-3 specific skills
-- Ends with a takeaway or question for readers
+- Starts with a hook about personal climate action
+- Shares a short insight on what they tracked (e.g. transport, meals, home energy)
+- Mentions 2-3 specific eco impact tags and the total CO2 emissions
+- Ends with an encouraging takeaway or question for others to reduce their emissions
 - Uses line breaks for readability
 - Is 150-200 words max
 - Sounds human and natural, not AI-generated
@@ -76,14 +81,14 @@ Only return the post text. No explanation.
 """
     else:
         prompt = f"""
-You are helping a student write a Twitter/X thread about their learning.
+You are helping a green advocate write a Twitter/X thread (3-4 tweets) about their carbon footprint tracking.
 
-Based on this skill profile:
+Based on this profile:
 {skill_profile}
 
-Write a punchy Twitter thread (3-4 tweets) that:
-- Tweet 1: Strong hook about what they learned
-- Tweet 2: Key insight or skill breakdown
+Write a punchy Twitter thread that:
+- Tweet 1: Strong hook about tracking carbon emissions
+- Tweet 2: Key insight or emission reduction tip
 - Tweet 3: Practical takeaway
 - Tweet 4 (optional): Call to action
 - Each tweet under 280 characters
@@ -102,7 +107,7 @@ Only return the thread text. No explanation.
 
 
 def generate_outreach(skill_profile, target_role, target_company):
-    """Generate cold DM and follow-up message using Groq."""
+    """Generate cold DM to sustainability manager or green company using Groq."""
     if not get_groq_client():
         return (
             "Error: GROQ_API_KEY not set. Please add it to your .env file.",
@@ -110,29 +115,29 @@ def generate_outreach(skill_profile, target_role, target_company):
         )
 
     cold_prompt = f"""
-Write a short, personalized cold LinkedIn DM from a student to a hiring manager at {target_company} for the role of {target_role}.
+Write a short, personalized cold LinkedIn DM from a green advocate to a Sustainability Manager or ESG Lead at {target_company} for the role/initiative of {target_role}.
 
-The student's skill profile:
+The sender's carbon profile details:
 {skill_profile}
 
 Rules:
 - Max 100 words
-- Mention 1-2 specific skills from the profile that match the role
-- Sound human and genuine, not copy-paste
-- End with a soft ask (a call or quick chat)
+- Mention their carbon tracking efforts or eco impact tags
+- Sound human and genuine
+- End with a soft ask (a quick virtual chat about their carbon management initiatives)
 - No subject line needed
 
 Only return the DM text.
 """
 
     followup_prompt = f"""
-Write a short follow-up LinkedIn DM to send 4 days after the first message to a hiring manager at {target_company} for the role of {target_role}.
+Write a short follow-up LinkedIn DM to send 4 days after the first message to the Sustainability Lead at {target_company} for the role/initiative of {target_role}.
 
 Rules:
 - Max 60 words
 - Reference that you sent a message earlier
 - Stay polite and not pushy
-- Restate 1 skill briefly
+- Restate interest in carbon reduction briefly
 - End with an easy yes/no question
 
 Only return the follow-up DM text.
@@ -194,21 +199,21 @@ def check_and_award_badges(user):
 
     # Badge: 7-day streak
     if user.streak and user.streak.current_streak >= 7:
-        award("7-Day Streak", "Logged learning 7 days in a row!", "🔥")
+        award("7-Day Streak", "Logged carbon footprint activities 7 days in a row!", "🔥")
 
-    # Badge: 5 courses completed
+    # Badge: 5 offset goals completed
     completed = Learning.query.filter_by(user_id=user.id).filter(Learning.progress == 100).count()
     if completed >= 5:
-        award("Course Champion", "Completed 5 courses!", "📚")
+        award("Eco Champion", "Completed 5 offset goals!", "🌿")
 
     # Badge: First post generated
     posts = GeneratedPost.query.filter_by(user_id=user.id).count()
     if posts >= 1:
-        award("First Post", "Generated your first social media post!", "🏆")
+        award("First Post", "Generated your first sustainability post!", "🏆")
 
     # Badge: First cold DM sent
     dms = GeneratedOutreach.query.filter_by(user_id=user.id).count()
     if dms >= 1:
-        award("First DM", "Sent your first cold outreach!", "💼")
+        award("First DM", "Generated your first climate outreach DM!", "💼")
 
     db.session.commit()

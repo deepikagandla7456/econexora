@@ -1,26 +1,26 @@
 {% extends "base.html" %}
-{% block title %}Learning Tracker - SkillNexora{% endblock %}
+{% block title %}Carbon Activity Tracker - EcoNexora{% endblock %}
 
 {% block content %}
 <div class="page">
-  <h2>📚 Learning Tracker</h2>
-  <p class="subtitle">Log what you learned today and build your skill profile.</p>
+  <h2>🌿 Carbon Footprint Tracker</h2>
+  <p class="subtitle">Log your daily activities to calculate your carbon impact and build a sustainability profile.</p>
 
   <div class="two-col">
     <!-- ADD FORM -->
     <div class="card">
-      <h3>Add New Entry</h3>
+      <h3>Log Eco-Activity</h3>
       <form method="POST" action="{{ url_for('learning.learn') }}">
 
         <div class="form-group">
-          <label>Title <span class="required">*</span></label>
-          <input type="text" name="title" placeholder="e.g. Python for Data Science" required />
+          <label>Activity Name <span class="required">*</span></label>
+          <input type="text" name="title" placeholder="e.g. Commute to office via bus, Beef burger lunch" required />
         </div>
 
         <div class="form-group">
-          <label>Platform <span class="required">*</span></label>
+          <label>Category <span class="required">*</span></label>
           <select name="platform" required>
-            <option value="">-- Select Platform --</option>
+            <option value="">-- Select Category --</option>
             {% for p in platforms %}
               <option value="{{ p }}">{{ p }}</option>
             {% endfor %}
@@ -28,7 +28,7 @@
         </div>
 
         <div class="form-group">
-          <label>Resource Type</label>
+          <label>Carbon Intensity</label>
           <select name="resource_type">
             {% for r in resource_types %}
               <option value="{{ r }}">{{ r.capitalize() }}</option>
@@ -37,37 +37,37 @@
         </div>
 
         <div class="form-group">
-          <label>Topic <span class="required">*</span></label>
-          <input type="text" name="topic" placeholder="e.g. Machine Learning, Flask, NLP" required />
+          <label>CO2 Emission Estimate <span class="required">*</span></label>
+          <input type="text" name="topic" placeholder="e.g. 4.5 kg CO2, 0.8 kg CO2" required />
         </div>
 
         <div class="form-group">
-          <label>Skills Learned <span class="required">*</span></label>
-          <input type="text" name="skills" placeholder="e.g. Python, Pandas, Scikit-learn (comma separated)" required />
+          <label>Eco Impact Tags <span class="required">*</span></label>
+          <input type="text" name="skills" placeholder="e.g. Low-Carbon, Public Transit, Plant-Based (comma separated)" required />
         </div>
 
         <div class="form-group">
-          <label>Progress (0-100%)</label>
+          <label>Offset Progress (0-100%)</label>
           <input type="number" name="progress" min="0" max="100" value="0" />
         </div>
 
         <div class="form-group">
-          <label>Time Spent (hours)</label>
+          <label>Quantity / Distance (e.g. km or hours)</label>
           <input type="number" name="time_spent" step="0.5" min="0" value="1" />
         </div>
 
         <div class="form-group">
-          <label>Resource URL (optional)</label>
+          <label>Reference Link (optional)</label>
           <input type="url" name="url" placeholder="https://..." />
         </div>
 
-        <button type="submit" class="btn btn-primary btn-full">+ Add Entry</button>
+        <button type="submit" class="btn btn-primary btn-full">+ Log Activity</button>
       </form>
     </div>
 
     <!-- ENTRIES LIST -->
     <div class="entries-list">
-      <h3>Your Learning Entries ({{ entries|length }})</h3>
+      <h3>Your Eco-Activity Logs ({{ entries|length }})</h3>
       {% if entries %}
         {% for entry in entries %}
           <div class="entry-card">
@@ -75,30 +75,30 @@
               <strong>{{ entry.title }}</strong>
               <span class="badge-tag">{{ entry.platform }}</span>
             </div>
-            <p class="entry-meta">📌 {{ entry.topic }} &nbsp;|&nbsp; 🕐 {{ entry.time_spent }}h &nbsp;|&nbsp; {{ entry.resource_type }}</p>
-            <p class="entry-skills">💡 {{ entry.skills }}</p>
+            <p class="entry-meta">📌 {{ entry.topic }} &nbsp;|&nbsp; 🕐 Qty: {{ entry.time_spent }} &nbsp;|&nbsp; Intensity: {{ entry.resource_type }}</p>
+            <p class="entry-skills">💡 Impact: {{ entry.skills }}</p>
 
             <div class="progress-bar">
               <div class="progress-fill" style="width: {{ entry.progress }}%"></div>
             </div>
             <div class="entry-actions">
-              <span>{{ entry.progress }}%</span>
+              <span>Offset: {{ entry.progress }}%</span>
               <form method="POST" action="{{ url_for('learning.update_progress', entry_id=entry.id) }}" class="inline-form">
                 <input type="number" name="progress" value="{{ entry.progress }}" min="0" max="100" class="small-input" />
-                <button type="submit" class="btn btn-small">Update</button>
+                <button type="submit" class="btn btn-small">Update Offset</button>
               </form>
               <form method="POST" action="{{ url_for('learning.delete_entry', entry_id=entry.id) }}" class="inline-form">
                 <button type="submit" class="btn btn-danger btn-small" onclick="return confirm('Delete this entry?')">Delete</button>
               </form>
             </div>
             {% if entry.url %}
-              <a href="{{ entry.url }}" target="_blank" class="entry-link">🔗 Open Resource</a>
+              <a href="{{ entry.url }}" target="_blank" class="entry-link">🔗 Reference Source</a>
             {% endif %}
           </div>
         {% endfor %}
       {% else %}
         <div class="empty-state">
-          <p>No entries yet. Add your first learning above! 👆</p>
+          <p>No carbon logs yet. Log your first eco-activity above! 👆</p>
         </div>
       {% endif %}
     </div>

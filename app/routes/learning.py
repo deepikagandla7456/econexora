@@ -6,10 +6,9 @@ from app.helpers import update_streak, check_and_award_badges
 
 learning = Blueprint("learning", __name__)
 
-PLATFORMS = ["Coursera", "Udemy", "Takeuforward", "YouTube", "LinkedIn Learning",
-             "freeCodeCamp", "GeeksforGeeks", "Medium", "Dev.to", "Book", "Other"]
+PLATFORMS = ["Transport", "Food", "Energy", "Waste", "Water", "Shopping", "Other"]
 
-RESOURCE_TYPES = ["course", "video", "blog", "book", "other"]
+RESOURCE_TYPES = ["low", "medium", "high", "offset", "other"]
 
 
 @learning.route("/learn", methods=["GET", "POST"])
@@ -17,7 +16,7 @@ RESOURCE_TYPES = ["course", "video", "blog", "book", "other"]
 def learn():
     if request.method == "POST":
         if current_user.is_demo:
-            flash("You're in demo mode — create a free account to save your learning entries! 🚀", "info")
+            flash("You're in demo mode — create a free account to save your eco-activities! 🌿", "info")
             return redirect(url_for("learning.learn"))
 
         title = request.form.get("title", "").strip()
@@ -57,7 +56,7 @@ def learn():
         update_streak(current_user)
         check_and_award_badges(current_user)
 
-        flash("Learning entry added! Keep it up 🚀", "success")
+        flash("Eco-activity logged! Keep up the green habits 🌿", "success")
         return redirect(url_for("learning.learn"))
 
     entries = Learning.query.filter_by(user_id=current_user.id).order_by(Learning.created_at.desc()).all()

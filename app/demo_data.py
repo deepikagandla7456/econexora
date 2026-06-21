@@ -44,62 +44,62 @@ def create_demo_user():
     )
     db.session.add(streak)
 
-    # Add demo learning entries
+    # Add demo carbon tracker entries
     demo_learnings = [
         Learning(
             user_id=demo_user.id,
-            title="Python for Data Science",
-            platform="Coursera",
-            resource_type="course",
-            topic="Data Science",
-            skills="Python, Pandas, NumPy, Matplotlib",
-            progress=80,
-            time_spent=12.0,
-            url="https://coursera.org"
-        ),
-        Learning(
-            user_id=demo_user.id,
-            title="Flask Full Course",
-            platform="YouTube",
-            resource_type="video",
-            topic="Web Development",
-            skills="Flask, Python, HTML, CSS, SQLite",
+            title="Commuted via Electric Train",
+            platform="Transport",
+            resource_type="low",
+            topic="0.8 kg CO2",
+            skills="Electric Transit, Low-Carbon, Public Rail",
             progress=100,
-            time_spent=6.5,
-            url="https://youtube.com"
+            time_spent=25.0,
+            url="https://ourworldindata.org/travel-carbon-footprint"
         ),
         Learning(
             user_id=demo_user.id,
-            title="Machine Learning A-Z",
-            platform="Udemy",
-            resource_type="course",
-            topic="Machine Learning",
-            skills="Scikit-learn, ML Algorithms, Feature Engineering",
-            progress=55,
-            time_spent=18.0,
-            url="https://udemy.com"
-        ),
-        Learning(
-            user_id=demo_user.id,
-            title="DSA with Striver",
-            platform="Takeuforward",
-            resource_type="course",
-            topic="Data Structures & Algorithms",
-            skills="Arrays, Trees, Graphs, Dynamic Programming",
-            progress=40,
-            time_spent=20.0,
-            url="https://takeuforward.org"
-        ),
-        Learning(
-            user_id=demo_user.id,
-            title="What is RAG? Explained Simply",
-            platform="Medium",
-            resource_type="blog",
-            topic="Generative AI",
-            skills="RAG, LLMs, Vector Databases, Embeddings",
+            title="Red Meat (Beef Burger) Meal",
+            platform="Food",
+            resource_type="high",
+            topic="6.2 kg CO2",
+            skills="Red Meat, Food Emissions, High Impact",
             progress=100,
-            time_spent=0.5,
+            time_spent=1.0,
+            url="https://ourworldindata.org/environmental-impacts-of-food"
+        ),
+        Learning(
+            user_id=demo_user.id,
+            title="Run HVAC Air Conditioning (5 hours)",
+            platform="Energy",
+            resource_type="high",
+            topic="3.5 kg CO2",
+            skills="Grid Electricity, AC cooling, HVAC usage",
+            progress=100,
+            time_spent=5.0,
+            url="https://www.eia.gov/energyexplained/use-of-energy/homes.php"
+        ),
+        Learning(
+            user_id=demo_user.id,
+            title="Plant-Based Vegan Lunch",
+            platform="Food",
+            resource_type="low",
+            topic="0.4 kg CO2",
+            skills="Plant-Based, Vegan diet, Low-carbon Meal",
+            progress=100,
+            time_spent=1.0,
             url="https://medium.com"
+        ),
+        Learning(
+            user_id=demo_user.id,
+            title="Home Solar Array Installation Check",
+            platform="Energy",
+            resource_type="low",
+            topic="0.0 kg CO2",
+            skills="Solar Power, Renewable Grid, Carbon Offset",
+            progress=80,
+            time_spent=2.0,
+            url="https://nrel.gov"
         ),
     ]
     for l in demo_learnings:
@@ -107,8 +107,8 @@ def create_demo_user():
 
     # Add demo badges
     demo_badges = [
-        Badge(user_id=demo_user.id, name="First Post", description="Generated your first social media post!", icon="🏆"),
-        Badge(user_id=demo_user.id, name="First DM", description="Sent your first cold outreach!", icon="💼"),
+        Badge(user_id=demo_user.id, name="First Log", description="Logged your first eco-activity!", icon="🏆"),
+        Badge(user_id=demo_user.id, name="Eco Champion", description="Completed 5 low-carbon actions!", icon="💼"),
     ]
     for b in demo_badges:
         db.session.add(b)
@@ -117,36 +117,32 @@ def create_demo_user():
     demo_post = GeneratedPost(
         user_id=demo_user.id,
         platform="linkedin",
-        content="""Just completed the Flask Full Course on YouTube — and honestly, it changed how I think about building things. 🚀
+        content="""Just completed a week of logging my carbon footprint with EcoNexora. 🌍
 
-Started with zero backend knowledge. Now I've built a fully functional web app with login, database, and API integration.
+Honestly, the numbers are eye-opening. Transitioning to a plant-based lunch and taking the train instead of driving saved over 10kg of CO2 this week alone.
 
-Here's what clicked for me:
-→ Flask is minimal by design — you only add what you need
-→ SQLAlchemy makes databases feel like Python objects
-→ Jinja2 templates are more powerful than I expected
+Key takeaways:
+→ Transportation remains the largest source of my weekly personal carbon impact.
+→ Diet choices (switching to vegan lunches) have a massive immediate emission reduction potential.
+→ AC grid electric usage is highly dependent on fossil-fuel intensity.
 
-The real learning was building something that actually works — not just following along.
-
-If you're a frontend dev curious about backend, Flask is the gentlest entry point.
-
-What framework did you start your backend journey with? 👇"""
+Little changes accumulate to real environmental impact. What small habit are you changing to lower your personal emissions? 👇"""
     )
     db.session.add(demo_post)
 
     # Add demo outreach
     demo_outreach = GeneratedOutreach(
         user_id=demo_user.id,
-        target_role="AI Engineer",
-        target_company="Google",
+        target_role="Carbon Management / ESG Intern",
+        target_company="ClimatePartners",
         cold_dm="""Hi [Name],
 
-I've been building AI-integrated web apps using Flask and Python, and recently completed projects involving LLMs and RAG systems. I came across your work at Google and the team's focus on responsible AI really resonates with me.
+I've been building tracking profiles mapping personal carbon footprint activities (transport, energy, food) using data from carbon accounting frameworks. I came across ClimatePartners' ESG tools and your focus on verified offset credits really resonates with me.
 
-I'd love to learn more about the AI Engineer role and how the team approaches production ML. Would you be open to a 15-minute chat?
+I'd love to learn more about the Carbon Management team and how you help enterprises audit their scope 1-3 emissions. Would you be open to a 10-minute chat?
 
-Thanks for your time!""",
-        followup="""Hi [Name], just following up on my message from a few days ago. I know you're busy — would a quick 10-minute call work this week to discuss the AI Engineer role at Google? Happy to work around your schedule!"""
+Thanks!""",
+        followup="""Hi [Name], just following up on my message. I know you're busy — would a quick 10-minute call work next week to discuss ESG analyst/intern roles at ClimatePartners? Happy to work around your schedule!"""
     )
     db.session.add(demo_outreach)
     db.session.commit()

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>{% block title %}SkillNexora{% endblock %}</title>
+  <title>{% block title %}EcoNexora{% endblock %}</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
 </head>
@@ -14,7 +14,7 @@
 {% if current_user.is_demo %}
 <!-- DEMO BANNER -->
 <div class="demo-banner">
-  <span>👀 You're exploring in <strong>Demo Mode</strong> — data won't be saved.</span>
+  <span>👀 You're exploring in <strong>Demo Mode</strong> — carbon logs won't be saved permanently.</span>
   <div class="demo-banner-actions">
     <a href="{{ url_for('auth.signup') }}" class="demo-signup-btn">Create Free Account</a>
     <a href="{{ url_for('auth.logout') }}" class="demo-exit-btn">Exit Demo</a>
@@ -25,23 +25,23 @@
 <!-- SIDEBAR -->
 <div class="sidebar {% if current_user.is_demo %}sidebar-with-banner{% endif %}" id="sidebar">
   <div class="sidebar-logo">
-    <a href="{{ url_for('main.dashboard') }}">SkillNexora 🚀</a>
+    <a href="{{ url_for('main.dashboard') }}">EcoNexora 🌿</a>
   </div>
   <nav class="sidebar-nav">
     <a href="{{ url_for('main.dashboard') }}" class="nav-item {% if request.endpoint == 'main.dashboard' %}active{% endif %}">
       <i class="fa fa-home"></i> <span>Home</span>
     </a>
     <a href="{{ url_for('learning.learn') }}" class="nav-item {% if request.endpoint == 'learning.learn' %}active{% endif %}">
-      <i class="fa fa-book"></i> <span>Track Learning</span>
+      <i class="fa fa-leaf"></i> <span>Track Carbon Impact</span>
     </a>
     <a href="{{ url_for('post.generate') }}" class="nav-item {% if request.endpoint == 'post.generate' %}active{% endif %}">
-      <i class="fa fa-pen-nib"></i> <span>Generate Posts</span>
+      <i class="fa fa-pen-nib"></i> <span>Generate Eco Posts</span>
     </a>
     <a href="{{ url_for('outreach.cold_outreach') }}" class="nav-item {% if request.endpoint == 'outreach.cold_outreach' %}active{% endif %}">
-      <i class="fa fa-envelope"></i> <span>Cold Outreach</span>
+      <i class="fa fa-envelope"></i> <span>Climate Outreach</span>
     </a>
     <a href="{{ url_for('streak.streak_page') }}" class="nav-item {% if request.endpoint == 'streak.streak_page' %}active{% endif %}">
-      <i class="fa fa-fire"></i> <span>Streak & Badges</span>
+      <i class="fa fa-fire"></i> <span>Eco-Streak & Badges</span>
     </a>
   </nav>
   <div class="sidebar-bottom">
@@ -61,7 +61,7 @@
 <!-- MOBILE TOP BAR -->
 <div class="mobile-topbar {% if current_user.is_demo %}topbar-with-banner{% endif %}">
   <button class="hamburger" onclick="openSidebar()"><i class="fa fa-bars"></i></button>
-  <span class="mobile-logo">SkillNexora 🚀</span>
+  <span class="mobile-logo">EcoNexora 🌿</span>
 </div>
 {% endif %}
 
@@ -90,32 +90,29 @@
       </div>
       <div class="footer-col">
         <h4>EXPLORE</h4>
-        <a href="{{ url_for('learning.learn') if current_user.is_authenticated else url_for('auth.signup') }}">Track Learning</a>
-        <a href="{{ url_for('post.generate') if current_user.is_authenticated else url_for('auth.signup') }}">Generate Posts</a>
-        <a href="{{ url_for('outreach.cold_outreach') if current_user.is_authenticated else url_for('auth.signup') }}">Cold Outreach</a>
-        <a href="{{ url_for('streak.streak_page') if current_user.is_authenticated else url_for('auth.signup') }}">Streak & Badges</a>
+        <a href="{{ url_for('learning.learn') if current_user.is_authenticated else url_for('auth.signup') }}">Track Carbon Impact</a>
+        <a href="{{ url_for('post.generate') if current_user.is_authenticated else url_for('auth.signup') }}">Generate Eco Posts</a>
+        <a href="{{ url_for('outreach.cold_outreach') if current_user.is_authenticated else url_for('auth.signup') }}">Climate Outreach</a>
+        <a href="{{ url_for('streak.streak_page') if current_user.is_authenticated else url_for('auth.signup') }}">Eco-Streak & Badges</a>
       </div>
       <div class="footer-col">
         <h4>RESOURCES</h4>
         <a href="https://github.com/deepikagandla7456/skillnexora" target="_blank">GitHub Repo</a>
-        <a href="https://github.com/deepikagandla7456/skillnexora/blob/main/CONTRIBUTING.md" target="_blank">Contribute</a>
         <a href="https://console.groq.com" target="_blank">Get Groq API Key</a>
-        <a href="https://github.com/deepikagandla7456/skillnexora/issues" target="_blank">Community</a>
+        <a href="https://ourworldindata.org/co2-emissions" target="_blank">CO2 Footprint Data</a>
       </div>
       <div class="footer-col">
         <h4>LEGAL</h4>
         <a href="#">Privacy Policy</a>
         <a href="#">Terms of Service</a>
-        <a href="https://github.com/deepikagandla7456/skillnexora/blob/main/LICENSE" target="_blank">License</a>
       </div>
       <div class="footer-col">
         <h4>BUILT BY</h4>
-        <p class="footer-built">SkillNexora is open source and built with ❤️ by students, for students.</p>
-        <a href="https://github.com/deepikagandla7456/skillnexora" target="_blank" class="btn btn-primary btn-small" style="margin-top:10px;">⭐ Star on GitHub</a>
+        <p class="footer-built">EcoNexora is built for Hack2Skills Prompt Wars to drive personal climate action and emissions transparency.</p>
       </div>
     </div>
     <div class="footer-bottom">
-      © 2026 SkillNexora. Made with ❤️ by Deepika Gandla.
+      © 2026 EcoNexora. Made with ❤️ for Prompt Wars.
     </div>
   </footer>
 </div>

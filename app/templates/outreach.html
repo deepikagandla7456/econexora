@@ -1,24 +1,24 @@
 {% extends "base.html" %}
-{% block title %}Cold Outreach - SkillNexora{% endblock %}
+{% block title %}Climate Outreach - EcoNexora{% endblock %}
 
 {% block content %}
 <div class="page">
-  <h2>📩 Cold Outreach Generator</h2>
-  <p class="subtitle">Get a personalized cold DM and follow-up based on your real skills.</p>
+  <h2>📩 Climate Outreach Generator</h2>
+  <p class="subtitle">Get a personalized cold DM and follow-up based on your tracked carbon offset and sustainability profile.</p>
 
   <div class="two-col">
     <div class="card">
       <h3>Generate Outreach</h3>
       <form method="POST" action="{{ url_for('outreach.cold_outreach') }}">
         <div class="form-group">
-          <label>Target Role <span class="required">*</span></label>
-          <input type="text" name="target_role" placeholder="e.g. AI Engineer, Data Scientist" required />
+          <label>Target Role / Initiative <span class="required">*</span></label>
+          <input type="text" name="target_role" placeholder="e.g. ESG Specialist, Carbon Auditor, Sustainability Intern" required />
         </div>
         <div class="form-group">
-          <label>Target Company <span class="required">*</span></label>
-          <input type="text" name="target_company" placeholder="e.g. Google, Infosys, Startup XYZ" required />
+          <label>Target ESG/Climate Company <span class="required">*</span></label>
+          <input type="text" name="target_company" placeholder="e.g. ClimatePartners, Carbon Trust, GreenCorp" required />
         </div>
-        <button type="submit" class="btn btn-primary btn-full">📩 Generate Outreach</button>
+        <button type="submit" class="btn btn-primary btn-full">📩 Generate Climate Outreach</button>
       </form>
 
       {% if cold_dm %}
