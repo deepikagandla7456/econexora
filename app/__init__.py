@@ -26,6 +26,52 @@ def create_app():
         db_uri = db_uri.replace("postgres://", "postgresql://", 1)
     app.config["SQLALCHEMY_DATABASE_URI"] = db_uri
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+    
+    # Configure Connection Pooling (Efficiency Upgrade for PostgreSQL)
+    if not db_uri.startswith("sqlite"):
+        app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
+            "pool_size": 10,
+            "pool_recycle": 1800,
+            "pool_pre_ping": True
+        }
+
+    # Custom CSRF Protection (Security Upgrade)
+    import secrets
+    from flask import session, request, abort
+
+    @app.before_request
+    def csrf_protect():
+        if "csrf_token" not in session:
+            session["csrf_token"] = secrets.token_hex(32)
+        
+        if request.method == "POST" and not app.config.get("TESTING"):
+            token = request.form.get("csrf_token")
+            if not token or token != session.get("csrf_token"):
+                abort(400, "CSRF token missing or invalid.")
+
+    @app.context_processor
+    def inject_csrf_token():
+        return dict(csrf_token=session.get("csrf_token", ""))
+
+    # Gzip Response Compression Middleware (Efficiency Upgrade)
+    import gzip
+    @app.after_request
+    def compress_response(response):
+        accept_encoding = request.headers.get("Accept-Encoding", "")
+        if (
+            "gzip" not in accept_encoding.lower()
+            or response.status_code < 200
+            or response.status_code >= 300
+            or "Content-Encoding" in response.headers
+        ):
+            return response
+
+        response.direct_passthrough = False
+        content = gzip.compress(response.get_data())
+        response.set_data(content)
+        response.headers["Content-Encoding"] = "gzip"
+        response.headers["Content-Length"] = str(len(content))
+        return response
 
     db.init_app(app)
     login_manager.init_app(app)

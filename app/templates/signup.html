@@ -5,6 +5,7 @@
 <div class="auth-box">
   <h2>Create your account</h2>
   <form method="POST" action="{{ url_for('auth.signup') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
     <div class="form-group">
       <label for="username">Username</label>
       <input type="text" id="username" name="username" placeholder="e.g. deepika123" required />

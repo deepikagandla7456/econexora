@@ -10,6 +10,7 @@
     <div class="card">
       <h3>Generate Outreach</h3>
       <form method="POST" action="{{ url_for('outreach.cold_outreach') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
         <div class="form-group">
           <label for="target_role">Target Role / Initiative <span class="required">*</span></label>
           <input type="text" id="target_role" name="target_role" placeholder="e.g. ESG Specialist, Carbon Auditor, Sustainability Intern" required />

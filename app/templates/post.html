@@ -10,6 +10,7 @@
     <div class="card">
       <h3>Generate a Post</h3>
       <form method="POST" action="{{ url_for('post.generate') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
         <div class="form-group">
           <label>Choose Platform</label>
           <div class="platform-select">

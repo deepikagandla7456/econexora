@@ -198,22 +198,26 @@ def check_and_award_badges(user):
             existing.add(name)
 
     # Badge: 7-day streak
-    if user.streak and user.streak.current_streak >= 7:
-        award("7-Day Streak", "Logged carbon footprint activities 7 days in a row!", "🔥")
+    if "7-Day Streak" not in existing:
+        if user.streak and user.streak.current_streak >= 7:
+            award("7-Day Streak", "Logged carbon footprint activities 7 days in a row!", "🔥")
 
     # Badge: 5 offset goals completed
-    completed = Learning.query.filter_by(user_id=user.id).filter(Learning.progress == 100).count()
-    if completed >= 5:
-        award("Eco Champion", "Completed 5 offset goals!", "🌿")
+    if "Eco Champion" not in existing:
+        completed = Learning.query.filter_by(user_id=user.id).filter(Learning.progress == 100).count()
+        if completed >= 5:
+            award("Eco Champion", "Completed 5 offset goals!", "🌿")
 
     # Badge: First post generated
-    posts = GeneratedPost.query.filter_by(user_id=user.id).count()
-    if posts >= 1:
-        award("First Post", "Generated your first sustainability post!", "🏆")
+    if "First Post" not in existing:
+        posts = GeneratedPost.query.filter_by(user_id=user.id).count()
+        if posts >= 1:
+            award("First Post", "Generated your first sustainability post!", "🏆")
 
     # Badge: First cold DM sent
-    dms = GeneratedOutreach.query.filter_by(user_id=user.id).count()
-    if dms >= 1:
-        award("First DM", "Generated your first climate outreach DM!", "💼")
+    if "First DM" not in existing:
+        dms = GeneratedOutreach.query.filter_by(user_id=user.id).count()
+        if dms >= 1:
+            award("First DM", "Generated your first climate outreach DM!", "💼")
 
     db.session.commit()

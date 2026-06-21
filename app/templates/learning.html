@@ -11,6 +11,7 @@
     <div class="card">
       <h3>Log Eco-Activity</h3>
       <form method="POST" action="{{ url_for('learning.learn') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
 
         <div class="form-group">
           <label for="title">Activity Name <span class="required">*</span></label>
@@ -84,10 +85,12 @@
             <div class="entry-actions">
               <span>Offset: {{ entry.progress }}%</span>
               <form method="POST" action="{{ url_for('learning.update_progress', entry_id=entry.id) }}" class="inline-form">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
                 <input type="number" name="progress" value="{{ entry.progress }}" min="0" max="100" class="small-input" />
                 <button type="submit" class="btn btn-small">Update Offset</button>
               </form>
               <form method="POST" action="{{ url_for('learning.delete_entry', entry_id=entry.id) }}" class="inline-form">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
                 <button type="submit" class="btn btn-danger btn-small" onclick="return confirm('Delete this entry?')">Delete</button>
               </form>
             </div>
