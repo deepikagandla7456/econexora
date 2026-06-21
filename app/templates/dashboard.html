@@ -42,7 +42,42 @@
 
     <div class="dash-section">
       <h3>Your Carbon & Eco Profile</h3>
-      <pre class="skill-profile">{{ skill_profile }}</pre>
+      {% if learnings %}
+        <div class="profile-summary-grid">
+          <div class="profile-stat-item">
+            <span class="profile-stat-label">Total CO2 Logged</span>
+            <span class="profile-stat-val">{{ profile_data.total_emissions }} kg</span>
+          </div>
+          <div class="profile-stat-item">
+            <span class="profile-stat-label">Logged Logs</span>
+            <span class="profile-stat-val">{{ profile_data.count }} logs</span>
+          </div>
+          <div class="profile-stat-item">
+            <span class="profile-stat-label">Qty/Distance</span>
+            <span class="profile-stat-val">{{ profile_data.total_quantity }} km/hr</span>
+          </div>
+        </div>
+        
+        <div class="profile-tags-section">
+          <strong>Categories Logged:</strong>
+          <div class="tags-container">
+            {% for cat in profile_data.categories %}
+              <span class="tag-category">{{ cat }}</span>
+            {% endfor %}
+          </div>
+        </div>
+        
+        <div class="profile-tags-section" style="margin-top: 16px;">
+          <strong>Eco Impact Tags:</strong>
+          <div class="tags-container">
+            {% for tag in profile_data.impact_tags %}
+              <span class="badge-tag" style="margin-right: 4px; margin-bottom: 4px; display: inline-block;">{{ tag }}</span>
+            {% endfor %}
+          </div>
+        </div>
+      {% else %}
+        <p class="empty-msg">No carbon logs yet. <a href="{{ url_for('learning.learn') }}">Log your first activity!</a></p>
+      {% endif %}
     </div>
   </div>
 

@@ -56,6 +56,47 @@ Number of Logs: {len(learnings)}
     return profile
 
 
+def get_carbon_profile_data(learnings):
+    """Build a structured dict of carbon profile stats for rendering in UI."""
+    if not learnings:
+        return {
+            "impact_tags": [],
+            "categories": [],
+            "total_quantity": 0.0,
+            "total_emissions": 0.0,
+            "count": 0
+        }
+    
+    impact_tags = set()
+    categories = set()
+    total_quantity = 0.0
+    total_emissions = 0.0
+
+    for l in learnings:
+        if l.skills:
+            for s in l.skills.split(","):
+                if s.strip():
+                    impact_tags.add(s.strip())
+        if l.platform:
+            categories.add(l.platform)
+        total_quantity += float(l.time_spent or 0)
+        if l.topic:
+            try:
+                # Extract numerical emission value, e.g. "4.5 kg CO2" -> 4.5
+                val = float(l.topic.replace("kg CO2", "").replace("kg", "").strip())
+                total_emissions += val
+            except ValueError:
+                pass
+                
+    return {
+        "impact_tags": sorted(list(impact_tags)),
+        "categories": sorted(list(categories)),
+        "total_quantity": round(total_quantity, 1),
+        "total_emissions": round(total_emissions, 1),
+        "count": len(learnings)
+    }
+
+
 def generate_post(skill_profile, platform):
     """Generate a LinkedIn or Twitter/X post showing carbon footprint awareness using Groq."""
     if not get_groq_client():

@@ -29,8 +29,9 @@ def streak_page():
         })
 
     streak_data = current_user.streak
-    total_entries = Learning.query.filter_by(user_id=current_user.id).count()
-    completed = Learning.query.filter_by(user_id=current_user.id).filter(Learning.progress == 100).count()
+    learnings = Learning.query.filter_by(user_id=current_user.id).all()
+    total_entries = len(learnings)
+    completed = sum(1 for l in learnings if l.progress == 100)
 
     return render_template(
         "streak.html",

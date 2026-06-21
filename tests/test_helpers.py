@@ -36,6 +36,22 @@ class HelpersTestCase(unittest.TestCase):
             self.assertIn("Total CO2 Emissions: 7.0 kg CO2", profile)
             self.assertIn("Low-Carbon", profile)
 
+    def test_get_carbon_profile_data(self):
+        with self.app.app_context():
+            l1 = Learning(user_id=self.user_id, title="Eco", platform="Transport", resource_type="low", topic="0.8 kg CO2", skills="Low-Carbon", progress=100, time_spent=5)
+            l2 = Learning(user_id=self.user_id, title="Meat", platform="Food", resource_type="high", topic="6.2 kg CO2", skills="High-Impact", progress=100, time_spent=2)
+            db.session.add_all([l1, l2])
+            db.session.commit()
+            
+            user = db.session.get(User, self.user_id)
+            from app.helpers import get_carbon_profile_data
+            data = get_carbon_profile_data(user.learnings)
+            self.assertEqual(data["total_emissions"], 7.0)
+            self.assertEqual(data["count"], 2)
+            self.assertEqual(data["total_quantity"], 7.0)
+            self.assertIn("Low-Carbon", data["impact_tags"])
+            self.assertIn("Transport", data["categories"])
+
     def test_update_streak_new(self):
         with self.app.app_context():
             user = db.session.get(User, self.user_id)
