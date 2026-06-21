@@ -15,7 +15,13 @@ def create_app():
     app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "dev-secret-key-change-this")
     
     # Configure Database: Use environment key with PostgreSQL fallback support
-    db_uri = os.getenv("DATABASE_URL", "sqlite:///skillnexora.db")
+    db_uri = os.getenv("DATABASE_URL")
+    if not db_uri:
+        if os.getenv("VERCEL"):
+            db_uri = "sqlite:////tmp/skillnexora.db"
+        else:
+            db_uri = "sqlite:///skillnexora.db"
+            
     if db_uri.startswith("postgres://"):
         db_uri = db_uri.replace("postgres://", "postgresql://", 1)
     app.config["SQLALCHEMY_DATABASE_URI"] = db_uri
