@@ -1,1 +1,1 @@
-# SkillNexora / EcoNexora Test Suite
+# EcoNexora Test Suite

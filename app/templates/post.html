@@ -14,12 +14,12 @@
         <div class="form-group">
           <label>Choose Platform</label>
           <div class="platform-select">
-            <label class="radio-card">
-              <input type="radio" name="platform" value="linkedin" checked />
+            <label class="radio-card" for="platform-linkedin">
+              <input type="radio" id="platform-linkedin" name="platform" value="linkedin" checked />
               <span>LinkedIn<br/><small>Professional story style</small></span>
             </label>
-            <label class="radio-card">
-              <input type="radio" name="platform" value="twitter" />
+            <label class="radio-card" for="platform-twitter">
+              <input type="radio" id="platform-twitter" name="platform" value="twitter" />
               <span>X / Twitter<br/><small>Short punchy thread</small></span>
             </label>
           </div>
@@ -31,7 +31,7 @@
         <div class="generated-box">
           <div class="generated-header">
             <h4>{% if platform == 'linkedin' %}LinkedIn Post{% else %}Twitter Thread{% endif %}</h4>
-            <button onclick="copyText('generated-post')" class="btn btn-small">📋 Copy</button>
+            <button onclick="copyText('generated-post')" class="btn btn-small" aria-label="Copy generated post content to clipboard">📋 Copy</button>
           </div>
           <pre id="generated-post" class="generated-text">{{ generated }}</pre>
         </div>

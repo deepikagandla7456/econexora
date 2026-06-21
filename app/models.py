@@ -1,6 +1,6 @@
 from app import db
 from flask_login import UserMixin
-from datetime import datetime, date
+from datetime import datetime, date, timezone
 
 
 class User(UserMixin, db.Model):
@@ -9,7 +9,7 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(120), unique=True, index=True, nullable=False)
     password = db.Column(db.String(200), nullable=False)
     is_demo = db.Column(db.Boolean, default=False)   # NEW: marks demo accounts
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc).replace(tzinfo=None))
 
     learnings = db.relationship("Learning", backref="user", lazy=True)
     badges = db.relationship("Badge", backref="user", lazy=True)
@@ -28,7 +28,7 @@ class Learning(db.Model):
     time_spent = db.Column(db.Float, default=0)
     url = db.Column(db.String(500), nullable=True)
     logged_date = db.Column(db.Date, default=date.today, index=True)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc).replace(tzinfo=None))
 
 
 class Badge(db.Model):
@@ -37,7 +37,7 @@ class Badge(db.Model):
     name = db.Column(db.String(100), nullable=False)
     description = db.Column(db.String(200), nullable=False)
     icon = db.Column(db.String(10), nullable=False)
-    earned_at = db.Column(db.DateTime, default=datetime.utcnow)
+    earned_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc).replace(tzinfo=None))
 
 
 class Streak(db.Model):
@@ -53,7 +53,7 @@ class GeneratedPost(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), index=True, nullable=False)
     platform = db.Column(db.String(20), nullable=False)
     content = db.Column(db.Text, nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc).replace(tzinfo=None))
 
 
 class GeneratedOutreach(db.Model):
@@ -63,4 +63,4 @@ class GeneratedOutreach(db.Model):
     target_company = db.Column(db.String(200), nullable=False)
     cold_dm = db.Column(db.Text, nullable=False)
     followup = db.Column(db.Text, nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc).replace(tzinfo=None))

@@ -73,7 +73,7 @@ class LearningTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         
         with self.app.app_context():
-            updated = Learning.query.get(entry_id)
+            updated = db.session.get(Learning, entry_id)
             self.assertEqual(updated.progress, 80)
 
     def test_delete_entry(self):
@@ -96,5 +96,5 @@ class LearningTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
 
         with self.app.app_context():
-            deleted = Learning.query.get(entry_id)
+            deleted = db.session.get(Learning, entry_id)
             self.assertIsNone(deleted)

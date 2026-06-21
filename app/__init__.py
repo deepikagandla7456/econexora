@@ -53,24 +53,55 @@ def create_app():
     def inject_csrf_token():
         return dict(csrf_token=session.get("csrf_token", ""))
 
-    # Gzip Response Compression Middleware (Efficiency Upgrade)
+    # Session Cookie Security Configuration
+    app.config["SESSION_COOKIE_SECURE"] = not (app.config.get("TESTING") or os.getenv("FLASK_ENV") == "development")
+    app.config["SESSION_COOKIE_HTTPONLY"] = True
+    app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
+
+    # Unified Security Headers, Caching, and Compression Middleware
     import gzip
     @app.after_request
-    def compress_response(response):
-        accept_encoding = request.headers.get("Accept-Encoding", "")
-        if (
-            "gzip" not in accept_encoding.lower()
-            or response.status_code < 200
-            or response.status_code >= 300
-            or "Content-Encoding" in response.headers
-        ):
-            return response
+    def optimize_and_secure_response(response):
+        # 1. Inject HTTP Security Headers
+        response.headers["X-Frame-Options"] = "DENY"
+        response.headers["X-Content-Type-Options"] = "nosniff"
+        response.headers["X-XSS-Protection"] = "1; mode=block"
+        response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+        response.headers["Content-Security-Policy"] = (
+            "default-src 'self'; "
+            "script-src 'self' 'unsafe-inline'; "
+            "style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; "
+            "font-src 'self' https://cdnjs.cloudflare.com; "
+            "img-src 'self' data:; "
+            "frame-ancestors 'none';"
+        )
 
-        response.direct_passthrough = False
-        content = gzip.compress(response.get_data())
-        response.set_data(content)
-        response.headers["Content-Encoding"] = "gzip"
-        response.headers["Content-Length"] = str(len(content))
+        # 2. Inject Caching Headers
+        # Cache static files aggressively; prevent caching on dynamic paths to ensure user state is fresh.
+        if request.path.startswith("/static/"):
+            response.headers["Cache-Control"] = "public, max-age=31536000, immutable"
+        else:
+            response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+            response.headers["Pragma"] = "no-cache"
+
+        # 3. Gzip Compression (if accepted by client)
+        accept_encoding = request.headers.get("Accept-Encoding", "")
+        content_type = response.headers.get("Content-Type", "")
+        is_compressible = any(t in content_type for t in ["text/html", "text/css", "application/javascript", "application/json"])
+
+        if (
+            "gzip" in accept_encoding.lower()
+            and response.status_code >= 200
+            and response.status_code < 300
+            and "Content-Encoding" not in response.headers
+            and is_compressible
+        ):
+            response.direct_passthrough = False
+            content = gzip.compress(response.get_data())
+            response.set_data(content)
+            response.headers["Content-Encoding"] = "gzip"
+            response.headers["Content-Length"] = str(len(content))
+
         return response
 
     db.init_app(app)
@@ -102,5 +133,5 @@ def create_app():
 @login_manager.user_loader
 def load_user(user_id):
     from app.models import User
-    return User.query.get(int(user_id))
+    return db.session.get(User, int(user_id))
 

@@ -16,12 +16,11 @@ def index():
 @main.route("/dashboard")
 @login_required
 def dashboard():
-    learnings = Learning.query.filter_by(user_id=current_user.id).order_by(Learning.created_at.desc()).limit(5).all()
+    all_learnings = Learning.query.filter_by(user_id=current_user.id).order_by(Learning.created_at.desc()).all()
+    learnings = all_learnings[:5]
     badges = Badge.query.filter_by(user_id=current_user.id).all()
     streak = current_user.streak
-    skill_profile = build_skill_profile(
-        Learning.query.filter_by(user_id=current_user.id).all()
-    )
+    skill_profile = build_skill_profile(all_learnings)
     return render_template(
         "dashboard.html",
         learnings=learnings,

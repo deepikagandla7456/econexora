@@ -31,21 +31,21 @@ class HelpersTestCase(unittest.TestCase):
             db.session.add_all([l1, l2])
             db.session.commit()
             
-            user = User.query.get(self.user_id)
+            user = db.session.get(User, self.user_id)
             profile = build_skill_profile(user.learnings)
             self.assertIn("Total CO2 Emissions: 7.0 kg CO2", profile)
             self.assertIn("Low-Carbon", profile)
 
     def test_update_streak_new(self):
         with self.app.app_context():
-            user = User.query.get(self.user_id)
+            user = db.session.get(User, self.user_id)
             update_streak(user)
             self.assertIsNotNone(user.streak)
             self.assertEqual(user.streak.current_streak, 1)
 
     def test_update_streak_consecutive(self):
         with self.app.app_context():
-            user = User.query.get(self.user_id)
+            user = db.session.get(User, self.user_id)
             streak = Streak(user_id=user.id, current_streak=1, longest_streak=1, last_logged=date.today() - timedelta(days=1))
             db.session.add(streak)
             db.session.commit()
@@ -55,7 +55,7 @@ class HelpersTestCase(unittest.TestCase):
 
     def test_check_and_award_badges(self):
         with self.app.app_context():
-            user = User.query.get(self.user_id)
+            user = db.session.get(User, self.user_id)
             streak = Streak(user_id=user.id, current_streak=7, longest_streak=7, last_logged=date.today())
             db.session.add(streak)
             db.session.commit()

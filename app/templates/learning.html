@@ -86,12 +86,12 @@
               <span>Offset: {{ entry.progress }}%</span>
               <form method="POST" action="{{ url_for('learning.update_progress', entry_id=entry.id) }}" class="inline-form">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
-                <input type="number" name="progress" value="{{ entry.progress }}" min="0" max="100" class="small-input" />
-                <button type="submit" class="btn btn-small">Update Offset</button>
+                <input type="number" name="progress" value="{{ entry.progress }}" min="0" max="100" class="small-input" aria-label="Update offset percentage for {{ entry.title }}" />
+                <button type="submit" class="btn btn-small" aria-label="Submit offset update for {{ entry.title }}">Update Offset</button>
               </form>
               <form method="POST" action="{{ url_for('learning.delete_entry', entry_id=entry.id) }}" class="inline-form">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
-                <button type="submit" class="btn btn-danger btn-small" onclick="return confirm('Delete this entry?')">Delete</button>
+                <button type="submit" class="btn btn-danger btn-small" onclick="return confirm('Delete this entry?')" aria-label="Delete carbon log: {{ entry.title }}">Delete</button>
               </form>
             </div>
             {% if entry.url %}

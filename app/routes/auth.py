@@ -42,7 +42,7 @@ def signup():
         db.session.commit()
 
         login_user(user)
-        flash("Account created! Welcome to SkillNexora 🚀", "success")
+        flash("Account created! Welcome to EcoNexora 🚀", "success")
         return redirect(url_for("main.dashboard"))
 
     return render_template("signup.html")

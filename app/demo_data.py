@@ -2,7 +2,7 @@
 Creates a fresh demo user with dummy data every time someone clicks Preview Demo.
 Old demo accounts older than 1 hour are cleaned up automatically.
 """
-from datetime import datetime, date, timedelta
+from datetime import datetime, date, timedelta, timezone
 from werkzeug.security import generate_password_hash
 import uuid
 
@@ -12,7 +12,7 @@ def create_demo_user():
     from app.models import User, Learning, Badge, Streak, GeneratedPost, GeneratedOutreach
 
     # Clean up old demo accounts (older than 1 hour)
-    cutoff = datetime.utcnow() - timedelta(hours=1)
+    cutoff = datetime.now(timezone.utc).replace(tzinfo=None) - timedelta(hours=1)
     old_demos = User.query.filter_by(is_demo=True).filter(User.created_at < cutoff).all()
     for old in old_demos:
         # Delete all related data first
@@ -28,7 +28,7 @@ def create_demo_user():
     uid = uuid.uuid4().hex[:8]
     demo_user = User(
         username=f"demo_{uid}",
-        email=f"demo_{uid}@skillnexora.demo",
+        email=f"demo_{uid}@econexora.demo",
         password=generate_password_hash("demo_pass"),
         is_demo=True
     )
@@ -107,8 +107,8 @@ def create_demo_user():
 
     # Add demo badges
     demo_badges = [
-        Badge(user_id=demo_user.id, name="First Log", description="Logged your first eco-activity!", icon="🏆"),
-        Badge(user_id=demo_user.id, name="Eco Champion", description="Completed 5 low-carbon actions!", icon="💼"),
+        Badge(user_id=demo_user.id, name="First Post", description="Generated your first sustainability post!", icon="🏆"),
+        Badge(user_id=demo_user.id, name="Eco Champion", description="Completed 5 offset goals!", icon="🌿"),
     ]
     for b in demo_badges:
         db.session.add(b)
