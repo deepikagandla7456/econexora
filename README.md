@@ -3,6 +3,8 @@
 
 EcoNexora is a carbon footprint accounting and awareness platform built for the Hack2Skills Prompt Wars. It empowers individuals to log their daily activities (transport, meals, electricity consumption), utilizes AI to extract environmental impacts and estimate emissions, builds a green profile, and generates copy-ready climate posts and sustainability outreach messages.
 
+
+
 ---
 
 ## 🎯 Hack2Skills Submission Details
