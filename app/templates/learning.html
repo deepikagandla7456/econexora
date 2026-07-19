@@ -86,7 +86,8 @@
               <span>Resolved: {{ entry.resolution_progress }}%</span>
               <form method="POST" action="{{ url_for('learning.update_progress', entry_id=entry.id) }}" class="inline-form">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
-                <input type="number" name="resolution_progress" value="{{ entry.resolution_progress }}" min="0" max="100" class="small-input" aria-label="Update resolution progress percentage for {{ entry.title }}" />
+                <label for="progress-{{ entry.id }}" class="sr-only" style="position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); border: 0;">Update resolution progress percentage for {{ entry.title }}</label>
+                <input type="number" id="progress-{{ entry.id }}" name="resolution_progress" value="{{ entry.resolution_progress }}" min="0" max="100" class="small-input" aria-label="Update resolution progress percentage for {{ entry.title }}" />
                 <button type="submit" class="btn btn-small" aria-label="Submit resolution update for {{ entry.title }}">Update Progress</button>
               </form>
               <form method="POST" action="{{ url_for('learning.delete_entry', entry_id=entry.id) }}" class="inline-form">

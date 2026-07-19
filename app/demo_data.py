@@ -11,16 +11,18 @@ def create_demo_user():
     from app import db
     from app.models import User, OperationLog, Badge, Streak, GeneratedBroadcast, GeneratedDispatch
 
-    # Clean up old demo accounts (older than 1 hour)
+    # Clean up old demo accounts (older than 1 hour) using modern SQLAlchemy 2.0 select and delete syntax
     cutoff = datetime.now(timezone.utc).replace(tzinfo=None) - timedelta(hours=1)
-    old_demos = User.query.filter_by(is_demo=True).filter(User.created_at < cutoff).all()
+    old_demos = db.session.scalars(
+        db.select(User).filter_by(is_demo=True).filter(User.created_at < cutoff)
+    ).all()
+
     for old in old_demos:
-        # Delete all related data first
-        OperationLog.query.filter_by(user_id=old.id).delete()
-        Badge.query.filter_by(user_id=old.id).delete()
-        Streak.query.filter_by(user_id=old.id).delete()
-        GeneratedBroadcast.query.filter_by(user_id=old.id).delete()
-        GeneratedDispatch.query.filter_by(user_id=old.id).delete()
+        db.session.execute(db.delete(OperationLog).filter_by(user_id=old.id))
+        db.session.execute(db.delete(Badge).filter_by(user_id=old.id))
+        db.session.execute(db.delete(Streak).filter_by(user_id=old.id))
+        db.session.execute(db.delete(GeneratedBroadcast).filter_by(user_id=old.id))
+        db.session.execute(db.delete(GeneratedDispatch).filter_by(user_id=old.id))
         db.session.delete(old)
     db.session.commit()
 

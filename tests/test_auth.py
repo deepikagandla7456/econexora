@@ -39,7 +39,7 @@ class AuthTestCase(unittest.TestCase):
         }, follow_redirects=True)
         self.assertEqual(response.status_code, 200)
         with self.app.app_context():
-            user = User.query.filter_by(email="test@arenaops.com").first()
+            user = db.session.scalars(db.select(User).filter_by(email="test@arenaops.com")).first()
             self.assertIsNotNone(user)
             self.assertEqual(user.username, "testuser")
 

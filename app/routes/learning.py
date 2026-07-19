@@ -59,7 +59,12 @@ def learn():
         flash("Incident logged and telemetry updated! 🏟️", "success")
         return redirect(url_for("learning.learn"))
 
-    entries = OperationLog.query.filter_by(user_id=current_user.id).order_by(OperationLog.created_at.desc()).all()
+    # Modern select syntax
+    entries = db.session.scalars(
+        db.select(OperationLog)
+        .filter_by(user_id=current_user.id)
+        .order_by(OperationLog.created_at.desc())
+    ).all()
     return render_template("learning.html", entries=entries, platforms=CATEGORIES, resource_types=SEVERITIES)
 
 
@@ -69,7 +74,11 @@ def delete_entry(entry_id):
     if current_user.is_demo:
         flash("You're in demo mode — create a free account to delete logs!", "info")
         return redirect(url_for("learning.learn"))
-    entry = OperationLog.query.filter_by(id=entry_id, user_id=current_user.id).first()
+    
+    # Modern select syntax
+    entry = db.session.scalars(
+        db.select(OperationLog).filter_by(id=entry_id, user_id=current_user.id)
+    ).first()
     if entry:
         db.session.delete(entry)
         db.session.commit()
@@ -83,7 +92,11 @@ def update_progress(entry_id):
     if current_user.is_demo:
         flash("You're in demo mode — create a free account to update resolution progress!", "info")
         return redirect(url_for("learning.learn"))
-    entry = OperationLog.query.filter_by(id=entry_id, user_id=current_user.id).first()
+    
+    # Modern select syntax
+    entry = db.session.scalars(
+        db.select(OperationLog).filter_by(id=entry_id, user_id=current_user.id)
+    ).first()
     if entry:
         try:
             progress = int(request.form.get("resolution_progress", entry.resolution_progress))

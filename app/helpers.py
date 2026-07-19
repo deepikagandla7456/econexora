@@ -23,69 +23,117 @@ def groq_chat(prompt):
     return response.choices[0].message.content.strip()
 
 
-def build_skill_profile(operation_logs):
-    """Build a summary of stadium operations status from the logs."""
-    if not operation_logs:
+def build_skill_profile(user_or_logs):
+    """Build a summary of stadium operations status from the logs (optimized DB path)."""
+    from app import db
+    from app.models import OperationLog
+
+    # Check if we got a list/iterable of logs or a user identity
+    if hasattr(user_or_logs, '__iter__'):
+        # Python-level fallback for list inputs (e.g., in unit tests)
+        if not user_or_logs:
+            return "No stadium operational incidents logged yet."
+        categories = {l.category for l in user_or_logs if l.category}
+        severities = {l.severity for l in user_or_logs if l.severity}
+        count = len(user_or_logs)
+        resolved = sum(1 for l in user_or_logs if l.resolution_progress == 100)
+        total_time = sum(float(l.response_time or 0) for l in user_or_logs)
+        avg_response = total_time / count if count else 0.0
+    else:
+        # Optimized database query path using user_id
+        user_id = user_or_logs.id if hasattr(user_or_logs, 'id') else user_or_logs
+        result = db.session.execute(
+            db.select(
+                db.func.count(OperationLog.id),
+                db.func.sum(db.case((OperationLog.resolution_progress == 100, 1), else_=0)),
+                db.func.avg(OperationLog.response_time)
+            ).filter(OperationLog.user_id == user_id)
+        ).first()
+
+        count = result[0] or 0
+        resolved = result[1] or 0
+        avg_response = float(result[2] or 0.0)
+
+        categories = db.session.scalars(
+            db.select(OperationLog.category.distinct()).filter(OperationLog.user_id == user_id)
+        ).all()
+        categories = {c for c in categories if c}
+
+        severities = db.session.scalars(
+            db.select(OperationLog.severity.distinct()).filter(OperationLog.user_id == user_id)
+        ).all()
+        severities = {s for s in severities if s}
+
+    if count == 0:
         return "No stadium operational incidents logged yet."
-
-    categories = set()
-    severities = set()
-    total_response_time = 0.0
-    resolved_count = 0
-
-    for l in operation_logs:
-        if l.category:
-            categories.add(l.category)
-        if l.severity:
-            severities.add(l.severity)
-        total_response_time += float(l.response_time or 0)
-        if l.resolution_progress == 100:
-            resolved_count += 1
 
     profile = f"""
 Stadium Operational Categories: {', '.join(sorted(list(categories)))}
 Severities Addressed: {', '.join(sorted(list(severities)))}
-Total Incident Logged: {len(operation_logs)}
-Resolved Incidents: {resolved_count}
-Average Operator Response Time: {round(total_response_time / len(operation_logs), 1) if operation_logs else 0} mins
+Total Incident Logged: {count}
+Resolved Incidents: {resolved}
+Average Operator Response Time: {round(avg_response, 1)} mins
     """.strip()
 
     return profile
 
 
-def get_operations_profile_data(operation_logs):
-    """Build a structured dict of stadium operations stats for rendering in UI."""
-    if not operation_logs:
-        return {
-            "categories": [],
-            "severities": [],
-            "total_response_time": 0.0,
-            "average_response_time": 0.0,
-            "resolved_count": 0,
-            "count": 0
-        }
-    
-    categories = set()
-    severities = set()
-    total_response_time = 0.0
-    resolved_count = 0
+def get_operations_profile_data(user_or_logs):
+    """Build a structured dict of stadium operations stats (optimized DB path)."""
+    from app import db
+    from app.models import OperationLog
 
-    for l in operation_logs:
-        if l.category:
-            categories.add(l.category)
-        if l.severity:
-            severities.add(l.severity)
-        total_response_time += float(l.response_time or 0)
-        if l.resolution_progress == 100:
-            resolved_count += 1
-                
+    if hasattr(user_or_logs, '__iter__'):
+        # Fallback for list inputs
+        if not user_or_logs:
+            return {
+                "categories": [],
+                "severities": [],
+                "total_response_time": 0.0,
+                "average_response_time": 0.0,
+                "resolved_count": 0,
+                "count": 0
+            }
+        categories = {l.category for l in user_or_logs if l.category}
+        severities = {l.severity for l in user_or_logs if l.severity}
+        count = len(user_or_logs)
+        resolved_count = sum(1 for l in user_or_logs if l.resolution_progress == 100)
+        total_response_time = sum(float(l.response_time or 0) for l in user_or_logs)
+        average_response_time = total_response_time / count if count else 0.0
+    else:
+        # Optimized database query path using user_id
+        user_id = user_or_logs.id if hasattr(user_or_logs, 'id') else user_or_logs
+        result = db.session.execute(
+            db.select(
+                db.func.count(OperationLog.id),
+                db.func.sum(OperationLog.response_time),
+                db.func.avg(OperationLog.response_time),
+                db.func.sum(db.case((OperationLog.resolution_progress == 100, 1), else_=0))
+            ).filter(OperationLog.user_id == user_id)
+        ).first()
+
+        count = result[0] or 0
+        total_response_time = float(result[1] or 0.0)
+        average_response_time = float(result[2] or 0.0)
+        resolved_count = int(result[3] or 0)
+
+        categories = db.session.scalars(
+            db.select(OperationLog.category.distinct()).filter(OperationLog.user_id == user_id)
+        ).all()
+        categories = [c for c in categories if c]
+
+        severities = db.session.scalars(
+            db.select(OperationLog.severity.distinct()).filter(OperationLog.user_id == user_id)
+        ).all()
+        severities = [s for s in severities if s]
+
     return {
         "categories": sorted(list(categories)),
         "severities": sorted(list(severities)),
         "total_response_time": round(total_response_time, 1),
-        "average_response_time": round(total_response_time / len(operation_logs), 1) if operation_logs else 0.0,
+        "average_response_time": round(average_response_time, 1),
         "resolved_count": resolved_count,
-        "count": len(operation_logs)
+        "count": count
     }
 
 
@@ -232,19 +280,29 @@ def check_and_award_badges(user):
 
     # Badge: Crisis Manager (5 resolved incidents)
     if "Crisis Manager" not in existing:
-        completed = OperationLog.query.filter_by(user_id=user.id).filter(OperationLog.resolution_progress == 100).count()
+        completed = db.session.scalar(
+            db.select(db.func.count(OperationLog.id))
+            .filter(OperationLog.user_id == user.id)
+            .filter(OperationLog.resolution_progress == 100)
+        ) or 0
         if completed >= 5:
             award("Crisis Manager", "Resolved 5 stadium operational incidents!", "🌿")
 
     # Badge: First Broadcast
     if "First Broadcast" not in existing:
-        broadcasts = GeneratedBroadcast.query.filter_by(user_id=user.id).count()
+        broadcasts = db.session.scalar(
+            db.select(db.func.count(GeneratedBroadcast.id))
+            .filter(GeneratedBroadcast.user_id == user.id)
+        ) or 0
         if broadcasts >= 1:
             award("First Broadcast", "Generated your first fan broadcast alert!", "🏆")
 
     # Badge: First Dispatch
     if "First Dispatch" not in existing:
-        dispatches = GeneratedDispatch.query.filter_by(user_id=user.id).count()
+        dispatches = db.session.scalar(
+            db.select(db.func.count(GeneratedDispatch.id))
+            .filter(GeneratedDispatch.user_id == user.id)
+        ) or 0
         if dispatches >= 1:
             award("First Dispatch", "Generated your first emergency crew dispatch!", "💼")
 

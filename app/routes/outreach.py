@@ -13,16 +13,25 @@ def cold_outreach():
     cold_dm = None
     followup = None
 
-    logs = OperationLog.query.filter_by(user_id=current_user.id).all()
+    # Efficient: count incidents in DB instead of pulling full logs objects list
+    count = db.session.scalar(
+        db.select(db.func.count(OperationLog.id)).filter_by(user_id=current_user.id)
+    ) or 0
 
-    if not logs:
+    if count == 0:
         flash("Log some operational events first before dispatching alert DMs!", "info")
         return render_template("outreach.html", cold_dm=None, followup=None, past=[])
 
     if request.method == "POST":
         if current_user.is_demo:
             flash("You're in demo mode — create a free account to trigger AI staff dispatch alerts! 🚀", "info")
-            past = GeneratedDispatch.query.filter_by(user_id=current_user.id).order_by(GeneratedDispatch.created_at.desc()).limit(5).all()
+            # Modern select query
+            past = db.session.scalars(
+                db.select(GeneratedDispatch)
+                .filter_by(user_id=current_user.id)
+                .order_by(GeneratedDispatch.created_at.desc())
+                .limit(5)
+            ).all()
             return render_template("outreach.html", cold_dm=None, followup=None, past=past)
 
         incident_title = request.form.get("target_role", "").strip()
@@ -32,7 +41,8 @@ def cold_outreach():
             flash("Please enter both incident title and target crew team.", "error")
             return render_template("outreach.html", cold_dm=None, followup=None, past=[])
 
-        ops_profile = build_skill_profile(logs)
+        # Efficient DB aggregate summary
+        ops_profile = build_skill_profile(current_user.id)
         cold_dm, followup = generate_outreach(ops_profile, incident_title, target_team)
 
         if not cold_dm.startswith("Error"):
@@ -47,5 +57,11 @@ def cold_outreach():
             db.session.commit()
             check_and_award_badges(current_user)
 
-    past = GeneratedDispatch.query.filter_by(user_id=current_user.id).order_by(GeneratedDispatch.created_at.desc()).limit(5).all()
+    # Modern select query
+    past = db.session.scalars(
+        db.select(GeneratedDispatch)
+        .filter_by(user_id=current_user.id)
+        .order_by(GeneratedDispatch.created_at.desc())
+        .limit(5)
+    ).all()
     return render_template("outreach.html", cold_dm=cold_dm, followup=followup, past=past)

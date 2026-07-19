@@ -30,11 +30,14 @@ def signup():
             flash("Password must be at least 6 characters long.", "error")
             return render_template("signup.html")
 
-        if User.query.filter_by(email=email).first():
+        # Modern SQLAlchemy 2.0 select syntax
+        existing_email = db.session.scalars(db.select(User).filter_by(email=email)).first()
+        if existing_email:
             flash("Email already registered.", "error")
             return render_template("signup.html")
 
-        if User.query.filter_by(username=username).first():
+        existing_user = db.session.scalars(db.select(User).filter_by(username=username)).first()
+        if existing_user:
             flash("Username already taken.", "error")
             return render_template("signup.html")
 
@@ -66,7 +69,8 @@ def login():
         email = request.form.get("email", "").strip()
         password = request.form.get("password", "").strip()
 
-        user = User.query.filter_by(email=email).first()
+        # Modern SQLAlchemy 2.0 select syntax
+        user = db.session.scalars(db.select(User).filter_by(email=email)).first()
         if not user or not check_password_hash(user.password, password):
             flash("Wrong email or password.", "error")
             return render_template("login.html")

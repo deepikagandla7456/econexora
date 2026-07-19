@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template
 from flask_login import login_required, current_user
+from app import db
 from app.models import Badge, OperationLog
 
 streak = Blueprint("streak", __name__)
@@ -15,7 +16,10 @@ ALL_BADGES = [
 @streak.route("/streak")
 @login_required
 def streak_page():
-    user_badges = Badge.query.filter_by(user_id=current_user.id).all()
+    # Modern select query
+    user_badges = db.session.scalars(
+        db.select(Badge).filter_by(user_id=current_user.id)
+    ).all()
     earned_names = {b.name for b in user_badges}
 
     # Mark which badges are earned vs locked
@@ -29,9 +33,17 @@ def streak_page():
         })
 
     streak_data = current_user.streak
-    logs = OperationLog.query.filter_by(user_id=current_user.id).all()
-    total_entries = len(logs)
-    completed = sum(1 for l in logs if l.resolution_progress == 100)
+    
+    # Highly efficient DB-level counting instead of loading full logs list in memory
+    total_entries = db.session.scalar(
+        db.select(db.func.count(OperationLog.id)).filter_by(user_id=current_user.id)
+    ) or 0
+    
+    completed = db.session.scalar(
+        db.select(db.func.count(OperationLog.id))
+        .filter_by(user_id=current_user.id)
+        .filter(OperationLog.resolution_progress == 100)
+    ) or 0
 
     return render_template(
         "streak.html",

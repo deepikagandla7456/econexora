@@ -46,7 +46,7 @@ class LearningTestCase(unittest.TestCase):
         }, follow_redirects=True)
         self.assertEqual(response.status_code, 200)
         with self.app.app_context():
-            entry = OperationLog.query.filter_by(title="Queue gate 4 high").first()
+            entry = db.session.scalars(db.select(OperationLog).filter_by(title="Queue gate 4 high")).first()
             self.assertIsNotNone(entry)
             self.assertEqual(entry.category, "Gates")
             self.assertEqual(entry.location, "Gate 4 Entrance")
