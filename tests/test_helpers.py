@@ -1,7 +1,7 @@
 import unittest
 from app import create_app, db
-from app.models import User, Learning, Streak, Badge
-from app.helpers import build_skill_profile, update_streak, check_and_award_badges
+from app.models import User, OperationLog, Streak, Badge
+from app.helpers import build_skill_profile, get_operations_profile_data, update_streak, check_and_award_badges
 from datetime import date, timedelta
 import os
 
@@ -14,7 +14,7 @@ class HelpersTestCase(unittest.TestCase):
         
         with self.app.app_context():
             db.create_all()
-            self.user = User(username="testuser", email="test@econexora.com", password="hashed_password")
+            self.user = User(username="testuser", email="test@arenaops.com", password="hashed_password")
             db.session.add(self.user)
             db.session.commit()
             self.user_id = self.user.id
@@ -26,31 +26,30 @@ class HelpersTestCase(unittest.TestCase):
 
     def test_build_skill_profile(self):
         with self.app.app_context():
-            l1 = Learning(user_id=self.user_id, title="Eco", platform="Transport", resource_type="low", topic="0.8 kg CO2", skills="Low-Carbon", progress=100, time_spent=5)
-            l2 = Learning(user_id=self.user_id, title="Meat", platform="Food", resource_type="high", topic="6.2 kg CO2", skills="High-Impact", progress=100, time_spent=2)
+            l1 = OperationLog(user_id=self.user_id, title="Queue gate 3", category="Gates", severity="low", location="Gate 3 Entrance", actions_taken="Added staff", resolution_progress=100, response_time=5.0)
+            l2 = OperationLog(user_id=self.user_id, title="Lot B full", category="Parking", severity="high", location="Parking Lot B", actions_taken="Closed lot", resolution_progress=100, response_time=10.0)
             db.session.add_all([l1, l2])
             db.session.commit()
             
             user = db.session.get(User, self.user_id)
-            profile = build_skill_profile(user.learnings)
-            self.assertIn("Total CO2 Emissions: 7.0 kg CO2", profile)
-            self.assertIn("Low-Carbon", profile)
+            profile = build_skill_profile(user.operation_logs)
+            self.assertIn("Total Incident Logged: 2", profile)
+            self.assertIn("Average Operator Response Time: 7.5 mins", profile)
 
-    def test_get_carbon_profile_data(self):
+    def test_get_operations_profile_data(self):
         with self.app.app_context():
-            l1 = Learning(user_id=self.user_id, title="Eco", platform="Transport", resource_type="low", topic="0.8 kg CO2", skills="Low-Carbon", progress=100, time_spent=5)
-            l2 = Learning(user_id=self.user_id, title="Meat", platform="Food", resource_type="high", topic="6.2 kg CO2", skills="High-Impact", progress=100, time_spent=2)
+            l1 = OperationLog(user_id=self.user_id, title="Queue gate 3", category="Gates", severity="low", location="Gate 3 Entrance", actions_taken="Added staff", resolution_progress=100, response_time=5.0)
+            l2 = OperationLog(user_id=self.user_id, title="Lot B full", category="Parking", severity="high", location="Parking Lot B", actions_taken="Closed lot", resolution_progress=100, response_time=10.0)
             db.session.add_all([l1, l2])
             db.session.commit()
             
             user = db.session.get(User, self.user_id)
-            from app.helpers import get_carbon_profile_data
-            data = get_carbon_profile_data(user.learnings)
-            self.assertEqual(data["total_emissions"], 7.0)
+            data = get_operations_profile_data(user.operation_logs)
+            self.assertEqual(data["total_response_time"], 15.0)
             self.assertEqual(data["count"], 2)
-            self.assertEqual(data["total_quantity"], 7.0)
-            self.assertIn("Low-Carbon", data["impact_tags"])
-            self.assertIn("Transport", data["categories"])
+            self.assertEqual(data["average_response_time"], 7.5)
+            self.assertIn("high", data["severities"])
+            self.assertIn("Parking", data["categories"])
 
     def test_update_streak_new(self):
         with self.app.app_context():

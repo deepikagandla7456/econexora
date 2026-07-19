@@ -1,26 +1,26 @@
 {% extends "base.html" %}
-{% block title %}Carbon Activity Tracker - EcoNexora{% endblock %}
+{% block title %}Log Stadium Incidents - StadiumOps AI{% endblock %}
 
 {% block content %}
 <div class="page">
-  <h2>🌿 Carbon Footprint Tracker</h2>
-  <p class="subtitle">Log your daily activities to calculate your carbon impact and build a sustainability profile.</p>
+  <h2>🏟️ Stadium Operations Log Console</h2>
+  <p class="subtitle">Log live arena incidents, crowd queues, parking loads, and track resolution timelines.</p>
 
   <div class="two-col">
     <!-- ADD FORM -->
     <div class="card">
-      <h3>Log Eco-Activity</h3>
+      <h3>Log Incident / Event</h3>
       <form method="POST" action="{{ url_for('learning.learn') }}">
         <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
 
         <div class="form-group">
-          <label for="title">Activity Name <span class="required">*</span></label>
-          <input type="text" id="title" name="title" placeholder="e.g. Commute to office via bus, Beef burger lunch" required />
+          <label for="title">Incident / Event Title <span class="required">*</span></label>
+          <input type="text" id="title" name="title" placeholder="e.g. Overcrowding at Gate 4, Spill near concessions" required />
         </div>
 
         <div class="form-group">
-          <label for="platform">Category <span class="required">*</span></label>
-          <select id="platform" name="platform" required>
+          <label for="category">Operational Category <span class="required">*</span></label>
+          <select id="category" name="category" required>
             <option value="">-- Select Category --</option>
             {% for p in platforms %}
               <option value="{{ p }}">{{ p }}</option>
@@ -29,79 +29,79 @@
         </div>
 
         <div class="form-group">
-          <label for="resource_type">Carbon Intensity</label>
-          <select id="resource_type" name="resource_type">
+          <label for="severity">Severity Level</label>
+          <select id="severity" name="severity">
             {% for r in resource_types %}
-              <option value="{{ r }}">{{ r.capitalize() }}</option>
+              <option value="{{ r }}">{{ r.upper() }}</option>
             {% endfor %}
           </select>
         </div>
 
         <div class="form-group">
-          <label for="topic">CO2 Emission Estimate <span class="required">*</span></label>
-          <input type="text" id="topic" name="topic" placeholder="e.g. 4.5 kg CO2, 0.8 kg CO2" required />
+          <label for="location">Event Location <span class="required">*</span></label>
+          <input type="text" id="location" name="location" placeholder="e.g. Gate 4 Entrance, Concourse B, Sector 102" required />
         </div>
 
         <div class="form-group">
-          <label for="skills">Eco Impact Tags <span class="required">*</span></label>
-          <input type="text" id="skills" name="skills" placeholder="e.g. Low-Carbon, Public Transit, Plant-Based (comma separated)" required />
+          <label for="actions_taken">Immediate Actions Taken <span class="required">*</span></label>
+          <input type="text" id="actions_taken" name="actions_taken" placeholder="e.g. Dispatched medical, redirected queues (comma separated)" required />
         </div>
 
         <div class="form-group">
-          <label for="progress">Offset Progress (0-100%)</label>
-          <input type="number" id="progress" name="progress" min="0" max="100" value="0" />
+          <label for="resolution_progress">Resolution Progress (0-100%)</label>
+          <input type="number" id="resolution_progress" name="resolution_progress" min="0" max="100" value="0" />
         </div>
 
         <div class="form-group">
-          <label for="time_spent">Quantity / Distance (e.g. km or hours)</label>
-          <input type="number" id="time_spent" name="time_spent" step="0.5" min="0" value="1" />
+          <label for="response_time">Operator Response Time (in minutes)</label>
+          <input type="number" id="response_time" name="response_time" step="0.5" min="0" value="5" />
         </div>
 
         <div class="form-group">
-          <label for="url">Reference Link (optional)</label>
-          <input type="url" id="url" name="url" placeholder="https://..." />
+          <label for="sensor_ref">Live Sensor / IoT Telemetry Feed URL (optional)</label>
+          <input type="url" id="sensor_ref" name="sensor_ref" placeholder="https://..." />
         </div>
 
-        <button type="submit" class="btn btn-primary btn-full">+ Log Activity</button>
+        <button type="submit" class="btn btn-primary btn-full">+ Log Incident</button>
       </form>
     </div>
 
     <!-- ENTRIES LIST -->
     <div class="entries-list">
-      <h3>Your Eco-Activity Logs ({{ entries|length }})</h3>
+      <h3>Active Venue Operations Logs ({{ entries|length }})</h3>
       {% if entries %}
         {% for entry in entries %}
           <div class="entry-card">
             <div class="entry-header">
               <strong>{{ entry.title }}</strong>
-              <span class="badge-tag">{{ entry.platform }}</span>
+              <span class="badge-tag">{{ entry.category }}</span>
             </div>
-            <p class="entry-meta">📌 {{ entry.topic }} &nbsp;|&nbsp; 🕐 Qty: {{ entry.time_spent }} &nbsp;|&nbsp; Intensity: {{ entry.resource_type }}</p>
-            <p class="entry-skills">💡 Impact: {{ entry.skills }}</p>
+            <p class="entry-meta">📍 Loc: {{ entry.location }} &nbsp;|&nbsp; 🕐 Response: {{ entry.response_time }}m &nbsp;|&nbsp; Severity: {{ entry.severity.upper() }}</p>
+            <p class="entry-skills">🛠️ Actions: {{ entry.actions_taken }}</p>
 
             <div class="progress-bar">
-              <div class="progress-fill" style="width: {{ entry.progress }}%"></div>
+              <div class="progress-fill" style="width: {{ entry.resolution_progress }}%"></div>
             </div>
             <div class="entry-actions">
-              <span>Offset: {{ entry.progress }}%</span>
+              <span>Resolved: {{ entry.resolution_progress }}%</span>
               <form method="POST" action="{{ url_for('learning.update_progress', entry_id=entry.id) }}" class="inline-form">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
-                <input type="number" name="progress" value="{{ entry.progress }}" min="0" max="100" class="small-input" aria-label="Update offset percentage for {{ entry.title }}" />
-                <button type="submit" class="btn btn-small" aria-label="Submit offset update for {{ entry.title }}">Update Offset</button>
+                <input type="number" name="resolution_progress" value="{{ entry.resolution_progress }}" min="0" max="100" class="small-input" aria-label="Update resolution progress percentage for {{ entry.title }}" />
+                <button type="submit" class="btn btn-small" aria-label="Submit resolution update for {{ entry.title }}">Update Progress</button>
               </form>
               <form method="POST" action="{{ url_for('learning.delete_entry', entry_id=entry.id) }}" class="inline-form">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
-                <button type="submit" class="btn btn-danger btn-small" onclick="return confirm('Delete this entry?')" aria-label="Delete carbon log: {{ entry.title }}">Delete</button>
+                <button type="submit" class="btn btn-danger btn-small" onclick="return confirm('Delete this log?')" aria-label="Delete incident log: {{ entry.title }}">Delete</button>
               </form>
             </div>
-            {% if entry.url %}
-              <a href="{{ entry.url }}" target="_blank" class="entry-link">🔗 Reference Source</a>
+            {% if entry.sensor_ref %}
+              <a href="{{ entry.sensor_ref }}" target="_blank" class="entry-link">🔗 Live Sensor Feed</a>
             {% endif %}
           </div>
         {% endfor %}
       {% else %}
         <div class="empty-state">
-          <p>No carbon logs yet. Log your first eco-activity above! 👆</p>
+          <p>No active logs. Log your first event above! 🏟️</p>
         </div>
       {% endif %}
     </div>

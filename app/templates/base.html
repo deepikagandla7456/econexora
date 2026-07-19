@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>{% block title %}EcoNexora{% endblock %}</title>
+  <title>{% block title %}StadiumOps AI{% endblock %}</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
 </head>
@@ -14,10 +14,10 @@
 {% if current_user.is_demo %}
 <!-- DEMO BANNER -->
 <div class="demo-banner">
-  <span>👀 You're exploring in <strong>Demo Mode</strong> — carbon logs won't be saved permanently.</span>
+  <span>👀 You're exploring in <strong>Demo Mode</strong> — operations logs won't be saved permanently.</span>
   <div class="demo-banner-actions">
-    <a href="{{ url_for('auth.signup') }}" class="demo-signup-btn">Create Free Account</a>
-    <a href="{{ url_for('auth.logout') }}" class="demo-exit-btn">Exit Demo</a>
+    <a href="{{ url_for('auth.signup') }}" class="demo-signup-btn" aria-label="Create a Free Operator Account">Create Operator Account</a>
+    <a href="{{ url_for('auth.logout') }}" class="demo-exit-btn" aria-label="Exit Demo Mode">Exit Demo</a>
   </div>
 </div>
 {% endif %}
@@ -25,28 +25,28 @@
 <!-- SIDEBAR -->
 <div class="sidebar {% if current_user.is_demo %}sidebar-with-banner{% endif %}" id="sidebar">
   <div class="sidebar-logo">
-    <a href="{{ url_for('main.dashboard') }}" aria-label="EcoNexora Home Dashboard">EcoNexora 🌿</a>
+    <a href="{{ url_for('main.dashboard') }}" aria-label="StadiumOps AI Home Dashboard">StadiumOps AI 🏟️</a>
   </div>
   <nav class="sidebar-nav">
-    <a href="{{ url_for('main.dashboard') }}" class="nav-item {% if request.endpoint == 'main.dashboard' %}active{% endif %}" aria-label="Go to Home Dashboard">
-      <i class="fa fa-home"></i> <span>Home</span>
+    <a href="{{ url_for('main.dashboard') }}" class="nav-item {% if request.endpoint == 'main.dashboard' %}active{% endif %}" aria-label="Go to Operations Dashboard">
+      <i class="fa fa-chart-line"></i> <span>Operations Dashboard</span>
     </a>
-    <a href="{{ url_for('learning.learn') }}" class="nav-item {% if request.endpoint == 'learning.learn' %}active{% endif %}" aria-label="Go to Track Carbon Impact">
-      <i class="fa fa-leaf"></i> <span>Track Carbon Impact</span>
+    <a href="{{ url_for('learning.learn') }}" class="nav-item {% if request.endpoint == 'learning.learn' %}active{% endif %}" aria-label="Go to Log Stadium Incidents">
+      <i class="fa fa-clipboard-list"></i> <span>Log Stadium Incident</span>
     </a>
-    <a href="{{ url_for('post.generate') }}" class="nav-item {% if request.endpoint == 'post.generate' %}active{% endif %}" aria-label="Go to Generate Eco Posts">
-      <i class="fa fa-pen-nib"></i> <span>Generate Eco Posts</span>
+    <a href="{{ url_for('post.generate') }}" class="nav-item {% if request.endpoint == 'post.generate' %}active{% endif %}" aria-label="Go to Generate Fan Broadcasts">
+      <i class="fa fa-bullhorn"></i> <span>PR Fan Broadcasts</span>
     </a>
-    <a href="{{ url_for('outreach.cold_outreach') }}" class="nav-item {% if request.endpoint == 'outreach.cold_outreach' %}active{% endif %}" aria-label="Go to Climate Outreach">
-      <i class="fa fa-envelope"></i> <span>Climate Outreach</span>
+    <a href="{{ url_for('outreach.cold_outreach') }}" class="nav-item {% if request.endpoint == 'outreach.cold_outreach' %}active{% endif %}" aria-label="Go to Staff Crew Dispatches">
+      <i class="fa fa-truck-emergency"></i> <span>Crew Alerts & Dispatch</span>
     </a>
-    <a href="{{ url_for('streak.streak_page') }}" class="nav-item {% if request.endpoint == 'streak.streak_page' %}active{% endif %}" aria-label="Go to Eco-Streak and Badges Wall">
-      <i class="fa fa-fire"></i> <span>Eco-Streak & Badges</span>
+    <a href="{{ url_for('streak.streak_page') }}" class="nav-item {% if request.endpoint == 'streak.streak_page' %}active{% endif %}" aria-label="Go to Operator Streaks and Badges Wall">
+      <i class="fa fa-award"></i> <span>Operator Streaks</span>
     </a>
   </nav>
   <div class="sidebar-bottom">
     {% if current_user.is_demo %}
-      <a href="{{ url_for('auth.signup') }}" class="nav-item signup-item" aria-label="Create a Free Account">
+      <a href="{{ url_for('auth.signup') }}" class="nav-item signup-item" aria-label="Create a Free Operator Account">
         <i class="fa fa-user-plus"></i> <span>Create Account</span>
       </a>
     {% else %}
@@ -61,7 +61,7 @@
 <!-- MOBILE TOP BAR -->
 <div class="mobile-topbar {% if current_user.is_demo %}topbar-with-banner{% endif %}">
   <button class="hamburger" onclick="openSidebar()" aria-label="Open Navigation Menu"><i class="fa fa-bars"></i></button>
-  <span class="mobile-logo">EcoNexora 🌿</span>
+  <span class="mobile-logo">StadiumOps AI 🏟️</span>
 </div>
 {% endif %}
 
@@ -90,16 +90,15 @@
       </div>
       <div class="footer-col">
         <h4>EXPLORE</h4>
-        <a href="{{ url_for('learning.learn') if current_user.is_authenticated else url_for('auth.signup') }}" aria-label="Explore Track Carbon Impact page">Track Carbon Impact</a>
-        <a href="{{ url_for('post.generate') if current_user.is_authenticated else url_for('auth.signup') }}" aria-label="Explore Generate Eco Posts page">Generate Eco Posts</a>
-        <a href="{{ url_for('outreach.cold_outreach') if current_user.is_authenticated else url_for('auth.signup') }}" aria-label="Explore Climate Outreach page">Climate Outreach</a>
-        <a href="{{ url_for('streak.streak_page') if current_user.is_authenticated else url_for('auth.signup') }}" aria-label="Explore Eco-Streak and Badges page">Eco-Streak & Badges</a>
+        <a href="{{ url_for('learning.learn') if current_user.is_authenticated else url_for('auth.signup') }}" aria-label="Explore Log Stadium Incident page">Log Incidents</a>
+        <a href="{{ url_for('post.generate') if current_user.is_authenticated else url_for('auth.signup') }}" aria-label="Explore Fan Broadcasts page">Fan Broadcasts</a>
+        <a href="{{ url_for('outreach.cold_outreach') if current_user.is_authenticated else url_for('auth.signup') }}" aria-label="Explore Crew Alerts page">Crew Dispatches</a>
+        <a href="{{ url_for('streak.streak_page') if current_user.is_authenticated else url_for('auth.signup') }}" aria-label="Explore Operator Streaks page">Operator Streaks</a>
       </div>
       <div class="footer-col">
         <h4>RESOURCES</h4>
         <a href="https://github.com/deepikagandla7456/econexora" target="_blank" aria-label="View Project Code on GitHub">GitHub Repo</a>
         <a href="https://console.groq.com" target="_blank" aria-label="Get Groq API Key Console">Get Groq API Key</a>
-        <a href="https://ourworldindata.org/co2-emissions" target="_blank" aria-label="Learn about CO2 Footprint Data">CO2 Footprint Data</a>
       </div>
       <div class="footer-col">
         <h4>LEGAL</h4>
@@ -108,11 +107,11 @@
       </div>
       <div class="footer-col">
         <h4>BUILT BY</h4>
-        <p class="footer-built">EcoNexora is built for Hack2Skills Prompt Wars to drive personal climate action and emissions transparency.</p>
+        <p class="footer-built">StadiumOps AI is built for Hack2Skills Prompt Wars to optimize Smart Stadium and Event Operations.</p>
       </div>
     </div>
     <div class="footer-bottom">
-      © 2026 EcoNexora. Made with <span role="img" aria-label="love">❤️</span> for Prompt Wars.
+      © 2026 StadiumOps AI. Made with <span role="img" aria-label="love">❤️</span> for Prompt Wars.
     </div>
   </footer>
 </div>

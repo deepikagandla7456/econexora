@@ -1,16 +1,16 @@
 {% extends "base.html" %}
-{% block title %}Eco-Streak & Badges - EcoNexora{% endblock %}
+{% block title %}Operator Streaks & Badges - StadiumOps AI{% endblock %}
 
 {% block content %}
 <div class="page">
-  <h2>🔥 Eco-Streak & Badges</h2>
-  <p class="subtitle">Stay consistent. Earn eco-badges. Build your sustainability footprint.</p>
+  <h2>🏆 Operator Streaks & Badges</h2>
+  <p class="subtitle">Maintain active operations logging consistency, resolve incident reports, and unlock venue operator badges.</p>
 
   <!-- Streak Stats -->
   <div class="stats-row">
     <div class="stat-card">
       <span class="stat-num">{{ streak.current_streak if streak else 0 }}</span>
-      <span class="stat-label">🔥 Green Streak</span>
+      <span class="stat-label">🔥 Operator Streak</span>
     </div>
     <div class="stat-card">
       <span class="stat-num">{{ streak.longest_streak if streak else 0 }}</span>
@@ -18,11 +18,11 @@
     </div>
     <div class="stat-card">
       <span class="stat-num">{{ total_entries }}</span>
-      <span class="stat-label">🌿 Total Logs</span>
+      <span class="stat-label">📋 Total Incident Logs</span>
     </div>
     <div class="stat-card">
       <span class="stat-num">{{ completed }}</span>
-      <span class="stat-label">✅ Fully Offsetted</span>
+      <span class="stat-label">✅ Fully Resolved</span>
     </div>
   </div>
 
@@ -47,14 +47,14 @@
 
   <!-- How to earn -->
   <div class="section card">
-    <h3>How to earn badges</h3>
+    <h3>How to earn operator badges</h3>
     <ul class="tip-list">
-      <li>🔥 <strong>7-Day Streak</strong> — Log a carbon footprint activity every day for 7 days</li>
-      <li>🌿 <strong>Eco Champion</strong> — Fully offset 5 activities (100% progress)</li>
-      <li>🏆 <strong>First Post</strong> — Generate your first sustainability LinkedIn or Twitter post</li>
-      <li>💼 <strong>First DM</strong> — Generate your first climate outreach message</li>
+      <li>🔥 <strong>7-Day Streak</strong> — Log a stadium operational incident every day for 7 days</li>
+      <li>🌿 <strong>Crisis Manager</strong> — Fully resolve 5 incident logs (100% resolution progress)</li>
+      <li>🏆 <strong>First Broadcast</strong> — Generate your first fan broadcast alert using AI</li>
+      <li>💼 <strong>First Dispatch</strong> — Generate your first emergency crew dispatch message</li>
     </ul>
-    <a href="{{ url_for('learning.learn') }}" class="btn btn-primary" aria-label="Navigate to log new carbon or eco activity">+ Log Eco-Activity</a>
+    <a href="{{ url_for('learning.learn') }}" class="btn btn-primary" aria-label="Navigate to log new stadium incident">+ Log Incident</a>
   </div>
 </div>
 {% endblock %}

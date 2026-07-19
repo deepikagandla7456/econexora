@@ -34,23 +34,23 @@ class AuthTestCase(unittest.TestCase):
     def test_signup_successful(self):
         response = self.client.post("/signup", data={
             "username": "testuser",
-            "email": "test@econexora.com",
+            "email": "test@arenaops.com",
             "password": "testpassword"
         }, follow_redirects=True)
         self.assertEqual(response.status_code, 200)
         with self.app.app_context():
-            user = User.query.filter_by(email="test@econexora.com").first()
+            user = User.query.filter_by(email="test@arenaops.com").first()
             self.assertIsNotNone(user)
             self.assertEqual(user.username, "testuser")
 
     def test_login_successful(self):
         self.client.post("/signup", data={
             "username": "testuser2",
-            "email": "test2@econexora.com",
+            "email": "test2@arenaops.com",
             "password": "testpassword"
         })
         response = self.client.post("/login", data={
-            "email": "test2@econexora.com",
+            "email": "test2@arenaops.com",
             "password": "testpassword"
         }, follow_redirects=True)
         self.assertEqual(response.status_code, 200)

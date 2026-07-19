@@ -1,5 +1,5 @@
 """
-Creates a fresh demo user with dummy data every time someone clicks Preview Demo.
+Creates a fresh demo user with dummy stadium operations data every time someone clicks Preview Demo.
 Old demo accounts older than 1 hour are cleaned up automatically.
 """
 from datetime import datetime, date, timedelta, timezone
@@ -9,18 +9,18 @@ import uuid
 
 def create_demo_user():
     from app import db
-    from app.models import User, Learning, Badge, Streak, GeneratedPost, GeneratedOutreach
+    from app.models import User, OperationLog, Badge, Streak, GeneratedBroadcast, GeneratedDispatch
 
     # Clean up old demo accounts (older than 1 hour)
     cutoff = datetime.now(timezone.utc).replace(tzinfo=None) - timedelta(hours=1)
     old_demos = User.query.filter_by(is_demo=True).filter(User.created_at < cutoff).all()
     for old in old_demos:
         # Delete all related data first
-        Learning.query.filter_by(user_id=old.id).delete()
+        OperationLog.query.filter_by(user_id=old.id).delete()
         Badge.query.filter_by(user_id=old.id).delete()
         Streak.query.filter_by(user_id=old.id).delete()
-        GeneratedPost.query.filter_by(user_id=old.id).delete()
-        GeneratedOutreach.query.filter_by(user_id=old.id).delete()
+        GeneratedBroadcast.query.filter_by(user_id=old.id).delete()
+        GeneratedDispatch.query.filter_by(user_id=old.id).delete()
         db.session.delete(old)
     db.session.commit()
 
@@ -28,7 +28,7 @@ def create_demo_user():
     uid = uuid.uuid4().hex[:8]
     demo_user = User(
         username=f"demo_{uid}",
-        email=f"demo_{uid}@econexora.demo",
+        email=f"demo_{uid}@arenaops.demo",
         password=generate_password_hash("demo_pass"),
         is_demo=True
     )
@@ -44,107 +44,92 @@ def create_demo_user():
     )
     db.session.add(streak)
 
-    # Add demo carbon tracker entries
-    demo_learnings = [
-        Learning(
+    # Add demo stadium telemetry log entries
+    demo_logs = [
+        OperationLog(
             user_id=demo_user.id,
-            title="Commuted via Electric Train",
-            platform="Transport",
-            resource_type="low",
-            topic="0.8 kg CO2",
-            skills="Electric Transit, Low-Carbon, Public Rail",
-            progress=100,
-            time_spent=25.0,
-            url="https://ourworldindata.org/travel-carbon-footprint"
+            title="Concourse A Spill reported",
+            category="Logistics",
+            severity="medium",
+            location="Concourse A near Gate 2",
+            actions_taken="Dispatched janitorial team with wet floor signs",
+            resolution_progress=100,
+            response_time=12.0,
+            sensor_ref="https://stadiumops.live/sensors/spills/A2"
         ),
-        Learning(
+        OperationLog(
             user_id=demo_user.id,
-            title="Red Meat (Beef Burger) Meal",
-            platform="Food",
-            resource_type="high",
-            topic="6.2 kg CO2",
-            skills="Red Meat, Food Emissions, High Impact",
-            progress=100,
-            time_spent=1.0,
-            url="https://ourworldindata.org/environmental-impacts-of-food"
+            title="Gate 4 queue exceeds 25 min",
+            category="Gates",
+            severity="high",
+            location="Gate 4 Entrance",
+            actions_taken="Opened backup queue lanes and redirected fans to Gate 5",
+            resolution_progress=100,
+            response_time=15.0,
+            sensor_ref="https://stadiumops.live/sensors/queues/gate4"
         ),
-        Learning(
+        OperationLog(
             user_id=demo_user.id,
-            title="Run HVAC Air Conditioning (5 hours)",
-            platform="Energy",
-            resource_type="high",
-            topic="3.5 kg CO2",
-            skills="Grid Electricity, AC cooling, HVAC usage",
-            progress=100,
-            time_spent=5.0,
-            url="https://www.eia.gov/energyexplained/use-of-energy/homes.php"
+            title="Parking Lot B capacity reached",
+            category="Parking",
+            severity="medium",
+            location="Parking Lot B",
+            actions_taken="Updated digital signage to direct traffic to Lot C",
+            resolution_progress=100,
+            response_time=8.0,
+            sensor_ref="https://stadiumops.live/sensors/parking/lotb"
         ),
-        Learning(
+        OperationLog(
             user_id=demo_user.id,
-            title="Plant-Based Vegan Lunch",
-            platform="Food",
-            resource_type="low",
-            topic="0.4 kg CO2",
-            skills="Plant-Based, Vegan diet, Low-carbon Meal",
-            progress=100,
-            time_spent=1.0,
-            url="https://medium.com"
+            title="Power fluctuations in media box",
+            category="Logistics",
+            severity="medium",
+            location="Media Center Box 4",
+            actions_taken="Switched to backup generator and logged ticket with engineers",
+            resolution_progress=100,
+            response_time=25.0,
+            sensor_ref="https://stadiumops.live/sensors/power/media"
         ),
-        Learning(
+        OperationLog(
             user_id=demo_user.id,
-            title="Home Solar Array Installation Check",
-            platform="Energy",
-            resource_type="low",
-            topic="0.0 kg CO2",
-            skills="Solar Power, Renewable Grid, Carbon Offset",
-            progress=80,
-            time_spent=2.0,
-            url="https://nrel.gov"
+            title="Minor medical aid requested",
+            category="Medical",
+            severity="low",
+            location="Sector 102 Row F",
+            actions_taken="First aid dispatch treated minor knee scrape",
+            resolution_progress=80,
+            response_time=5.0,
+            sensor_ref="https://stadiumops.live/alerts/medical/102F"
         ),
     ]
-    for l in demo_learnings:
+    for l in demo_logs:
         db.session.add(l)
 
     # Add demo badges
     demo_badges = [
-        Badge(user_id=demo_user.id, name="First Post", description="Generated your first sustainability post!", icon="🏆"),
-        Badge(user_id=demo_user.id, name="Eco Champion", description="Completed 5 offset goals!", icon="🌿"),
+        Badge(user_id=demo_user.id, name="First Dispatch", description="Generated your first emergency crew dispatch!", icon="🏆"),
+        Badge(user_id=demo_user.id, name="Crisis Manager", description="Resolved 5 stadium operational incidents!", icon="🌿"),
     ]
     for b in demo_badges:
         db.session.add(b)
 
-    # Add demo generated post
-    demo_post = GeneratedPost(
+    # Add demo generated broadcast
+    demo_broadcast = GeneratedBroadcast(
         user_id=demo_user.id,
-        platform="linkedin",
-        content="""Just completed a week of logging my carbon footprint with EcoNexora. 🌍
-
-Honestly, the numbers are eye-opening. Transitioning to a plant-based lunch and taking the train instead of driving saved over 10kg of CO2 this week alone.
-
-Key takeaways:
-→ Transportation remains the largest source of my weekly personal carbon impact.
-→ Diet choices (switching to vegan lunches) have a massive immediate emission reduction potential.
-→ AC grid electric usage is highly dependent on fossil-fuel intensity.
-
-Little changes accumulate to real environmental impact. What small habit are you changing to lower your personal emissions? 👇"""
+        channel="public_alert",
+        content="""Spectator Alert: Gate 4 is currently experiencing high wait times due to a scanner issue. Please proceed to Gate 3 or 5 for entry. Thank you for your patience! 🏟️"""
     )
-    db.session.add(demo_post)
+    db.session.add(demo_broadcast)
 
-    # Add demo outreach
-    demo_outreach = GeneratedOutreach(
+    # Add demo generated dispatch
+    demo_dispatch = GeneratedDispatch(
         user_id=demo_user.id,
-        target_role="Carbon Management / ESG Intern",
-        target_company="ClimatePartners",
-        cold_dm="""Hi [Name],
-
-I've been building tracking profiles mapping personal carbon footprint activities (transport, energy, food) using data from carbon accounting frameworks. I came across ClimatePartners' ESG tools and your focus on verified offset credits really resonates with me.
-
-I'd love to learn more about the Carbon Management team and how you help enterprises audit their scope 1-3 emissions. Would you be open to a 10-minute chat?
-
-Thanks!""",
-        followup="""Hi [Name], just following up on my message. I know you're busy — would a quick 10-minute call work next week to discuss ESG analyst/intern roles at ClimatePartners? Happy to work around your schedule!"""
+        incident_title="Overcrowding at Gate 4",
+        target_team="Security Crew A",
+        dispatch_message="""Security Alert: Gate 4 wait times have exceeded 25 minutes. Security Crew A is requested to dispatch to Gate 4 immediately to assist with queue management and direct fans to Gate 5.""",
+        followup_instructions="""Status check after 10 minutes. Ensure backup scanners are functional and report queue size updates."""
     )
-    db.session.add(demo_outreach)
+    db.session.add(demo_dispatch)
     db.session.commit()
 
     return demo_user

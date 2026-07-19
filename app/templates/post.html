@@ -1,37 +1,37 @@
 {% extends "base.html" %}
-{% block title %}Eco Post Generator - EcoNexora{% endblock %}
+{% block title %}PR Broadcasts - StadiumOps AI{% endblock %}
 
 {% block content %}
 <div class="page">
-  <h2>✍️ AI Eco Post Generator</h2>
-  <p class="subtitle">Generate LinkedIn or Twitter posts sharing your carbon footprint tracking achievements and green insights.</p>
+  <h2>📢 AI Fan & Staff PR Broadcast Generator</h2>
+  <p class="subtitle">Draft public stadium broadcasts and internal shift notification updates based on live venue operational metrics.</p>
 
   <div class="two-col">
     <div class="card">
-      <h3>Generate a Post</h3>
+      <h3>Generate Broadcast Alert</h3>
       <form method="POST" action="{{ url_for('post.generate') }}">
         <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
         <div class="form-group">
-          <label>Choose Platform</label>
+          <label>Broadcast Target Channel</label>
           <div class="platform-select">
             <label class="radio-card" for="platform-linkedin">
-              <input type="radio" id="platform-linkedin" name="platform" value="linkedin" checked />
-              <span>LinkedIn<br/><small>Professional story style</small></span>
+              <input type="radio" id="platform-linkedin" name="platform" value="public_alert" checked />
+              <span>Public Alert<br/><small>Spectator warning style</small></span>
             </label>
             <label class="radio-card" for="platform-twitter">
-              <input type="radio" id="platform-twitter" name="platform" value="twitter" />
-              <span>X / Twitter<br/><small>Short punchy thread</small></span>
+              <input type="radio" id="platform-twitter" name="platform" value="staff_announcement" />
+              <span>Staff Broadcast<br/><small>Concise shift checklist</small></span>
             </label>
           </div>
         </div>
-        <button type="submit" class="btn btn-primary btn-full">✨ Generate Post</button>
+        <button type="submit" class="btn btn-primary btn-full">✨ Draft Broadcast</button>
       </form>
 
       {% if generated %}
         <div class="generated-box">
           <div class="generated-header">
-            <h4>{% if platform == 'linkedin' %}LinkedIn Post{% else %}Twitter Thread{% endif %}</h4>
-            <button onclick="copyText('generated-post')" class="btn btn-small" aria-label="Copy generated post content to clipboard">📋 Copy</button>
+            <h4>{% if platform == 'public_alert' %}Public Announcement{% else %}Staff Broadcast{% endif %}</h4>
+            <button onclick="copyText('generated-post')" class="btn btn-small" aria-label="Copy generated broadcast content to clipboard">📋 Copy</button>
           </div>
           <pre id="generated-post" class="generated-text">{{ generated }}</pre>
         </div>
@@ -39,19 +39,19 @@
     </div>
 
     <div class="entries-list">
-      <h3>Past Generated Posts</h3>
+      <h3>Past Broadcast Alerts</h3>
       {% if past_posts %}
         {% for p in past_posts %}
           <div class="entry-card">
             <div class="entry-header">
-              <strong>{{ '🔵 LinkedIn' if p.platform == 'linkedin' else '🐦 Twitter' }}</strong>
+              <strong>{{ '📢 Public Alert' if p.channel == 'public_alert' else '👥 Staff Broadcast' }}</strong>
               <small>{{ p.created_at.strftime('%d %b %Y') }}</small>
             </div>
             <pre class="past-post-text">{{ p.content[:200] }}{% if p.content|length > 200 %}...{% endif %}</pre>
           </div>
         {% endfor %}
       {% else %}
-        <p class="empty-msg">No posts generated yet.</p>
+        <p class="empty-msg">No broadcasts drafted yet.</p>
       {% endif %}
     </div>
   </div>

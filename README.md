@@ -1,27 +1,25 @@
-# EcoNexora 🌿
-> AI-powered Carbon Footprint Awareness and Tracking Platform that drives personal climate action.
+# StadiumOps AI 🏟️
+> AI-powered telemetry hub, incident dispatcher, and public broadcast assistant for Smart Stadium & Tournament Operations.
 
-EcoNexora is a carbon footprint accounting and awareness platform built for the Hack2Skills Prompt Wars. It empowers individuals to log their daily activities (transport, meals, electricity consumption), utilizes AI to extract environmental impacts and estimate emissions, builds a green profile, and generates copy-ready climate posts and sustainability outreach messages.
-
-
+StadiumOps AI is a real-time event operations dashboard and crew dispatch platform built for the Hack2Skills Prompt Wars. It empowers stadium operators and tournament directors to log live incidents (gate wait times, parking capacities, concessions, security events), utilizes AI to extract operational insights and draft spectator broadcasts, builds an operator profile, and generates copy-ready staff alert DMs and check-in instructions.
 
 ---
 
 ## 🎯 Hack2Skills Submission Details
 
-*   **Chosen Vertical**: Sustainability / Green Tech / Carbon Footprint Awareness
-*   **Target Users**: Eco-conscious citizens, green advocates, sustainability students, ESG job seekers, and climate organizations.
+*   **Chosen Vertical**: Smart Stadium & Tournament Operations
+*   **Target Users**: Stadium managers, event operators, tournament directors, security leads, emergency response crews, and stadium visitors.
 
 ### 🧠 Approach & Logic
 
-1.  **AI Carbon Impact & Emissions Extraction**:
-    *   **Logic**: When an eco-activity is logged, the raw details (e.g. "vegan burger lunch" or "diesel bus commute") are processed. The **Groq API** (`llama-3.3-70b-versatile`) calculates estimated emissions (in kg CO2) and returns environmental impact tags.
-    *   **Impact**: Simplifies carbon accounting by converting natural language activity titles into concrete CO2 equivalents.
-2.  **Gamification (Eco-Streaks & Green Badges)**:
-    *   **Logic**: The system checks the last logged date. Continuous logging increments the "Green Streak." Reaching milestone streaks awards badges like **Eco Champion** (offsetting 5 logs) and **7-Day Streak**.
-    *   **Impact**: Reinforces consistent tracking habits using positive gamified rewards.
-3.  **Sustainability Content & Outreach Pipeline**:
-    *   **Logic**: The system summarizes the user's logged categories, offsets, and emissions data. This context is used by the AI engine to generate professional LinkedIn eco-posts, X/Twitter threads, and personalized DMs targeting Sustainability Managers or ESG companies.
+1.  **Incident & Telemetry Logging**:
+    *   **Logic**: Operators log live events (e.g. "Gate 4 queue delays" or "Concourse A liquid spill"). The system records severity level (low, medium, high, critical), location, actions taken, resolution progress, and live IoT sensor URLs.
+    *   **Impact**: Simplifies stadium operations monitoring by capturing live, structured telemetry data in one dashboard.
+2.  **Gamification (Operator Streaks & Badges)**:
+    *   **Logic**: Continuous logging increments the "Operator Streak." Reaching milestone streaks awards badges like **Crisis Manager** (resolving 5 incidents) and **7-Day Streak**.
+    *   **Impact**: Reinforces consistent operational logs tracking habits using positive gamified rewards.
+3.  **PR Broadcast & Crew Alerts Pipeline**:
+    *   **Logic**: The system summarizes the stadium's current active incidents, severities, and locations. The AI engine (`llama-3.3-70b-versatile` via Groq) drafts spectator warnings, public broadcasts, and urgent SMS dispatches/follow-up instructions for dispatching crew teams.
 
 ---
 
@@ -30,20 +28,20 @@ EcoNexora is a carbon footprint accounting and awareness platform built for the 
 | Component | Technology |
 | :--- | :--- |
 | **Backend** | Python + Flask |
-| **Database** | PostgreSQL / SQLite (Local Fallback) |
+| **Database** | SQLite (Production serverless-ready SQLite) |
 | **Authentication** | Flask-Login |
-| **AI Inference** | Groq API (Llama 3 Models) |
-| **Frontend** | HTML5, CSS3, JavaScript, Tailwind CSS, Jinja2 Templates |
+| **AI Inference** | Groq API (Llama-3.3 Models) |
+| **Frontend** | HTML5, CSS3, JavaScript, Vanilla CSS, Jinja2 Templates |
 
 ---
 
 ## ✨ Features Overview
 
-*   **🌿 Carbon Tracker**: Log daily footprint items (Category: Transport, Food, Energy, Waste, Water, Shopping). Track offset progress.
-*   **🔥 Eco-Streak & Badges**: Consistent logging builds streak multiplier and awards unlockable green badges.
-*   **✍️ AI Eco Post Generator**: Instantly generate structured LinkedIn articles or Twitter threads advocating personal carbon metrics.
-*   **📩 AI Climate Outreach**: Personalize outreach DMs to Sustainability Leads, ESG Leads, and environmental non-profits.
-*   **🚀 Demo Mode**: Explorable guest access seeded with transport and energy carbon logs.
+*   **🏟️ Operations Console**: Log active stadium events (Category: Parking, Gates, Concessions, Security, Medical, Logistics). Track resolution progress sliders.
+*   **🏆 Operator Streaks**: Consistent logging builds active streaks and awards unlockable operations achievements.
+*   **📢 PR Broadcasts**: Instantly draft spectator instructions, gate redirects, and alert notifications for socials.
+*   **🚨 Staff Crew Alerts**: Personalize urgent SMS dispatches and follow-up check-ins to custodial, security, or medical crews.
+*   **🚀 Demo Mode**: Ephemeral guest access seeded with mock queue, spill, and parking telemetry logs.
 
 ---
 
@@ -51,8 +49,8 @@ EcoNexora is a carbon footprint accounting and awareness platform built for the 
 
 **1. Clone the repository**
 ```bash
-git clone https://github.com/deepikagandla7456/skillnexora.git
-cd skillnexora
+git clone https://github.com/deepikagandla7456/econexora.git
+cd econexora
 ```
 
 **2. Setup Virtual Environment & Install Dependencies**
@@ -80,29 +78,22 @@ Open [http://localhost:5000](http://localhost:5000) in your web browser.
 ## 📁 Project Structure
 
 ```
-skillnexora/
+econexora/
 ├── app/
 │   ├── __init__.py        → Flask App factory and DB context setup
 │   ├── models.py          → SQLAlchemy Database models
-│   ├── helpers.py         → Groq LLM eco-prompts and streak logic
-│   ├── demo_data.py       → Seeds carbon tracking logs for Demo Mode
+│   ├── helpers.py         → Groq LLM prompts and streak logic
+│   ├── demo_data.py       → Seeds mock telemetry logs for Demo Mode
 │   ├── routes/            → Blueprint routes
 │   │   ├── auth.py        → Auth & Demo login
-│   │   ├── main.py        → Home & Dashboard
-│   │   ├── learning.py    → Carbon Tracker routes
-│   │   ├── post.py        → AI Eco Post Generation
-│   │   ├── outreach.py    → AI Climate Outreach
-│   │   └── streak.py      → Gamified eco-badges wall
+│   │   ├── main.py        → Home & Dashboard console
+│   │   ├── learning.py    → Operations Log routes
+│   │   ├── post.py        → AI PR Broadcast Generator
+│   │   ├── outreach.py    → AI Incident Crew Dispatch
+│   │   └── streak.py      → Gamified Operator Streaks
 │   ├── templates/         → Jinja2 HTML Layouts
 │   └── static/            → Style sheets
 ├── requirements.txt       → Library dependencies
 ├── vercel.json            → Serverless deployment configuration
 └── run.py                 → Development server entry point
 ```
-
----
-
-## 🔍 Assumptions & Fallbacks
-
-*   **API Accessibility**: Assumes valid `GROQ_API_KEY` for LLM tasks. If missing or invalid, the app catches the exception gracefully and continues to run.
-*   **Storage Fallback**: Defaults to local SQLite database if no PostgreSQL `DATABASE_URL` is set, enabling zero-config local runs.

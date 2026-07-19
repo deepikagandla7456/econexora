@@ -1,9 +1,9 @@
 {% extends "base.html" %}
-{% block title %}Sign Up - EcoNexora{% endblock %}
+{% block title %}Operator Sign Up - StadiumOps AI{% endblock %}
 
 {% block content %}
 <div class="auth-box">
-  <h2>Create your account</h2>
+  <h2>Operator Registration</h2>
   <form method="POST" action="{{ url_for('auth.signup') }}">
     <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
     <div class="form-group">

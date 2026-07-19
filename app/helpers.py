@@ -23,119 +23,108 @@ def groq_chat(prompt):
     return response.choices[0].message.content.strip()
 
 
-def build_skill_profile(learnings):
-    """Build a summary of user's carbon footprint from their logs."""
-    if not learnings:
-        return "No carbon tracking entries yet."
+def build_skill_profile(operation_logs):
+    """Build a summary of stadium operations status from the logs."""
+    if not operation_logs:
+        return "No stadium operational incidents logged yet."
 
-    impact_tags = set()
-    categories = []
-    total_quantity = 0
-    total_emissions = 0.0
+    categories = set()
+    severities = set()
+    total_response_time = 0.0
+    resolved_count = 0
 
-    for l in learnings:
-        for s in l.skills.split(","):
-            impact_tags.add(s.strip())
-        categories.append(l.platform)
-        total_quantity += l.time_spent or 0
-        try:
-            # Extract numerical emission value, e.g., "4.5 kg CO2" -> 4.5
-            val = float(l.topic.replace("kg CO2", "").replace("kg", "").strip())
-            total_emissions += val
-        except ValueError:
-            pass
+    for l in operation_logs:
+        if l.category:
+            categories.add(l.category)
+        if l.severity:
+            severities.add(l.severity)
+        total_response_time += float(l.response_time or 0)
+        if l.resolution_progress == 100:
+            resolved_count += 1
 
     profile = f"""
-Eco Impact Tags: {', '.join(impact_tags)}
-Categories Logged: {', '.join(set(categories))}
-Total Activity Log Hours/Km: {round(total_quantity, 1)}
-Total CO2 Emissions: {round(total_emissions, 1)} kg CO2
-Number of Logs: {len(learnings)}
+Stadium Operational Categories: {', '.join(sorted(list(categories)))}
+Severities Addressed: {', '.join(sorted(list(severities)))}
+Total Incident Logged: {len(operation_logs)}
+Resolved Incidents: {resolved_count}
+Average Operator Response Time: {round(total_response_time / len(operation_logs), 1) if operation_logs else 0} mins
     """.strip()
 
     return profile
 
 
-def get_carbon_profile_data(learnings):
-    """Build a structured dict of carbon profile stats for rendering in UI."""
-    if not learnings:
+def get_operations_profile_data(operation_logs):
+    """Build a structured dict of stadium operations stats for rendering in UI."""
+    if not operation_logs:
         return {
-            "impact_tags": [],
             "categories": [],
-            "total_quantity": 0.0,
-            "total_emissions": 0.0,
+            "severities": [],
+            "total_response_time": 0.0,
+            "average_response_time": 0.0,
+            "resolved_count": 0,
             "count": 0
         }
     
-    impact_tags = set()
     categories = set()
-    total_quantity = 0.0
-    total_emissions = 0.0
+    severities = set()
+    total_response_time = 0.0
+    resolved_count = 0
 
-    for l in learnings:
-        if l.skills:
-            for s in l.skills.split(","):
-                if s.strip():
-                    impact_tags.add(s.strip())
-        if l.platform:
-            categories.add(l.platform)
-        total_quantity += float(l.time_spent or 0)
-        if l.topic:
-            try:
-                # Extract numerical emission value, e.g. "4.5 kg CO2" -> 4.5
-                val = float(l.topic.replace("kg CO2", "").replace("kg", "").strip())
-                total_emissions += val
-            except ValueError:
-                pass
+    for l in operation_logs:
+        if l.category:
+            categories.add(l.category)
+        if l.severity:
+            severities.add(l.severity)
+        total_response_time += float(l.response_time or 0)
+        if l.resolution_progress == 100:
+            resolved_count += 1
                 
     return {
-        "impact_tags": sorted(list(impact_tags)),
         "categories": sorted(list(categories)),
-        "total_quantity": round(total_quantity, 1),
-        "total_emissions": round(total_emissions, 1),
-        "count": len(learnings)
+        "severities": sorted(list(severities)),
+        "total_response_time": round(total_response_time, 1),
+        "average_response_time": round(total_response_time / len(operation_logs), 1) if operation_logs else 0.0,
+        "resolved_count": resolved_count,
+        "count": len(operation_logs)
     }
 
 
-def generate_post(skill_profile, platform):
-    """Generate a LinkedIn or Twitter/X post showing carbon footprint awareness using Groq."""
+def generate_post(ops_profile, channel):
+    """Generate official public PR stadium announcements or internal staff alerts using Groq."""
     if not get_groq_client():
         return "Error: GROQ_API_KEY not set. Please add it to your .env file."
 
-    if platform == "linkedin":
+    if channel == "public_alert":
         prompt = f"""
-You are a sustainability advocate helping an individual write a LinkedIn post about their carbon footprint tracking journey.
+You are the Public Relations Lead for a smart sports stadium.
+Based on the current stadium operations telemetry profile:
+{ops_profile}
 
-Based on this carbon footprint profile:
-{skill_profile}
+Write a professional, clear public announcement for fans and spectators that:
+- Starts with a spectator safety and operations update
+- Highlights dynamic crowd flow directions (e.g. queue redirection, parking status)
+- Gives constructive advice to minimize travel delay (using 2-3 specific locations/categories)
+- Ends with an encouraging, welcoming sports-themed closing
+- Uses line breaks for clean readability
+- Is under 150 words max
+- Sounds natural, calm, and professional, not AI-generated
 
-Write a professional LinkedIn post that:
-- Starts with a hook about personal climate action
-- Shares a short insight on what they tracked (e.g. transport, meals, home energy)
-- Mentions 2-3 specific eco impact tags and the total CO2 emissions
-- Ends with an encouraging takeaway or question for others to reduce their emissions
-- Uses line breaks for readability
-- Is 150-200 words max
-- Sounds human and natural, not AI-generated
-
-Only return the post text. No explanation.
+Only return the broadcast announcement text. No explanations.
 """
     else:
         prompt = f"""
-You are helping a green advocate write a Twitter/X thread (3-4 tweets) about their carbon footprint tracking.
+You are the Operations Director of a smart stadium tournament.
+Based on this operational profile:
+{ops_profile}
 
-Based on this profile:
-{skill_profile}
+Write a concise staff notification message (WhatsApp/SMS style, 3-4 bullet items) that:
+- Summarizes incident resolutions and outstanding items
+- Mentions immediate response protocols for critical/high severity zones
+- Sets clear expectations for the upcoming match shift
+- Keeps the tone direct, professional, and urgent
+- Under 250 characters total
 
-Write a punchy Twitter thread that:
-- Tweet 1: Strong hook about tracking carbon emissions
-- Tweet 2: Key insight or emission reduction tip
-- Tweet 3: Practical takeaway
-- Tweet 4 (optional): Call to action
-- Each tweet under 280 characters
-- Label them as 1/, 2/, 3/ etc
-
-Only return the thread text. No explanation.
+Only return the notification text. No explanations.
 """
 
     try:
@@ -144,48 +133,46 @@ Only return the thread text. No explanation.
             return "Error: GROQ_API_KEY not set."
         return result
     except Exception as e:
-        return f"Error generating post: {str(e)}"
+        return f"Error generating announcement: {str(e)}"
 
 
-def generate_outreach(skill_profile, target_role, target_company):
-    """Generate cold DM to sustainability manager or green company using Groq."""
+def generate_outreach(ops_profile, incident_title, target_team):
+    """Generate SMS/WhatsApp dispatch crew alerts using Groq."""
     if not get_groq_client():
         return (
             "Error: GROQ_API_KEY not set. Please add it to your .env file.",
             "Error: GROQ_API_KEY not set. Please add it to your .env file."
         )
 
-    cold_prompt = f"""
-Write a short, personalized cold LinkedIn DM from a green advocate to a Sustainability Manager or ESG Lead at {target_company} for the role/initiative of {target_role}.
+    dispatch_prompt = f"""
+Write a short, highly-urgent SMS dispatch alert to the {target_team} regarding the stadium incident: "{incident_title}".
 
-The sender's carbon profile details:
-{skill_profile}
+Use this stadium operations profile for context:
+{ops_profile}
 
 Rules:
 - Max 100 words
-- Mention their carbon tracking efforts or eco impact tags
-- Sound human and genuine
-- End with a soft ask (a quick virtual chat about their carbon management initiatives)
-- No subject line needed
+- State the incident, location, severity, and immediate instructions for {target_team}
+- End with a request to confirm dispatch (e.g., 'Reply ACK to confirm')
+- Keep it highly professional, clear, and urgent
 
-Only return the DM text.
+Only return the dispatch message text.
 """
 
     followup_prompt = f"""
-Write a short follow-up LinkedIn DM to send 4 days after the first message to the Sustainability Lead at {target_company} for the role/initiative of {target_role}.
+Write a short follow-up SMS check-in message to send to {target_team} 10 minutes after dispatch for "{incident_title}".
 
 Rules:
 - Max 60 words
-- Reference that you sent a message earlier
-- Stay polite and not pushy
-- Restate interest in carbon reduction briefly
-- End with an easy yes/no question
+- Reference the previous incident alert
+- Ask for immediate resolution status or roadblock updates
+- Tone must be concise, helpful, and direct
 
-Only return the follow-up DM text.
+Only return the follow-up text.
 """
 
     try:
-        cold = groq_chat(cold_prompt)
+        cold = groq_chat(dispatch_prompt)
         followup = groq_chat(followup_prompt)
         if cold is None or followup is None:
             return ("Error: GROQ_API_KEY not set.", "Error: GROQ_API_KEY not set.")
@@ -196,7 +183,7 @@ Only return the follow-up DM text.
 
 
 def update_streak(user):
-    """Update the user's streak based on today's date."""
+    """Update the user's logging streak based on today's date."""
     from app import db
     from app.models import Streak
 
@@ -211,12 +198,12 @@ def update_streak(user):
     streak = user.streak
 
     if streak.last_logged == today:
-        return  # already logged today
+        return
 
     if streak.last_logged == today - timedelta(days=1):
         streak.current_streak += 1
     else:
-        streak.current_streak = 1  # streak broken, reset
+        streak.current_streak = 1
 
     if streak.current_streak > streak.longest_streak:
         streak.longest_streak = streak.current_streak
@@ -226,9 +213,9 @@ def update_streak(user):
 
 
 def check_and_award_badges(user):
-    """Check conditions and award badges the user hasn't earned yet."""
+    """Check conditions and award operations badges."""
     from app import db
-    from app.models import Badge, Learning, GeneratedPost, GeneratedOutreach
+    from app.models import Badge, OperationLog, GeneratedBroadcast, GeneratedDispatch
 
     existing = {b.name for b in user.badges}
 
@@ -241,24 +228,24 @@ def check_and_award_badges(user):
     # Badge: 7-day streak
     if "7-Day Streak" not in existing:
         if user.streak and user.streak.current_streak >= 7:
-            award("7-Day Streak", "Logged carbon footprint activities 7 days in a row!", "🔥")
+            award("7-Day Streak", "Logged operational logs 7 days in a row!", "🔥")
 
-    # Badge: 5 offset goals completed
-    if "Eco Champion" not in existing:
-        completed = Learning.query.filter_by(user_id=user.id).filter(Learning.progress == 100).count()
+    # Badge: Crisis Manager (5 resolved incidents)
+    if "Crisis Manager" not in existing:
+        completed = OperationLog.query.filter_by(user_id=user.id).filter(OperationLog.resolution_progress == 100).count()
         if completed >= 5:
-            award("Eco Champion", "Completed 5 offset goals!", "🌿")
+            award("Crisis Manager", "Resolved 5 stadium operational incidents!", "🌿")
 
-    # Badge: First post generated
-    if "First Post" not in existing:
-        posts = GeneratedPost.query.filter_by(user_id=user.id).count()
-        if posts >= 1:
-            award("First Post", "Generated your first sustainability post!", "🏆")
+    # Badge: First Broadcast
+    if "First Broadcast" not in existing:
+        broadcasts = GeneratedBroadcast.query.filter_by(user_id=user.id).count()
+        if broadcasts >= 1:
+            award("First Broadcast", "Generated your first fan broadcast alert!", "🏆")
 
-    # Badge: First cold DM sent
-    if "First DM" not in existing:
-        dms = GeneratedOutreach.query.filter_by(user_id=user.id).count()
-        if dms >= 1:
-            award("First DM", "Generated your first climate outreach DM!", "💼")
+    # Badge: First Dispatch
+    if "First Dispatch" not in existing:
+        dispatches = GeneratedDispatch.query.filter_by(user_id=user.id).count()
+        if dispatches >= 1:
+            award("First Dispatch", "Generated your first emergency crew dispatch!", "💼")
 
     db.session.commit()

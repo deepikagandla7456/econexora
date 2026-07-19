@@ -1,40 +1,40 @@
 {% extends "base.html" %}
-{% block title %}Climate Outreach - EcoNexora{% endblock %}
+{% block title %}Crew Alerts & Dispatch - StadiumOps AI{% endblock %}
 
 {% block content %}
 <div class="page">
-  <h2>📩 Climate Outreach Generator</h2>
-  <p class="subtitle">Get a personalized cold DM and follow-up based on your tracked carbon offset and sustainability profile.</p>
+  <h2>🚨 AI Incident Crew Dispatch Generator</h2>
+  <p class="subtitle">Draft urgent SMS dispatch alerts and check-in instructions for stadium support, safety, and operational crews.</p>
 
   <div class="two-col">
     <div class="card">
-      <h3>Generate Outreach</h3>
+      <h3>Generate Dispatch Alert</h3>
       <form method="POST" action="{{ url_for('outreach.cold_outreach') }}">
         <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
         <div class="form-group">
-          <label for="target_role">Target Role / Initiative <span class="required">*</span></label>
-          <input type="text" id="target_role" name="target_role" placeholder="e.g. ESG Specialist, Carbon Auditor, Sustainability Intern" required />
+          <label for="target_role">Incident Title / Event Reference <span class="required">*</span></label>
+          <input type="text" id="target_role" name="target_role" placeholder="e.g. Overcrowding at Gate 4, Medical emergency in Sector 12" required />
         </div>
         <div class="form-group">
-          <label for="target_company">Target ESG/Climate Company <span class="required">*</span></label>
-          <input type="text" id="target_company" name="target_company" placeholder="e.g. ClimatePartners, Carbon Trust, GreenCorp" required />
+          <label for="target_company">Target Response Team / Crew <span class="required">*</span></label>
+          <input type="text" id="target_company" name="target_company" placeholder="e.g. Security Team A, Janitorial Crew 3, Medical Team" required />
         </div>
-        <button type="submit" class="btn btn-primary btn-full">📩 Generate Climate Outreach</button>
+        <button type="submit" class="btn btn-primary btn-full">🚨 Generate Dispatch Message</button>
       </form>
 
       {% if cold_dm %}
         <div class="generated-box">
           <div class="generated-header">
-            <h4>Cold DM (Send this first)</h4>
-            <button onclick="copyText('cold-dm')" class="btn btn-small" aria-label="Copy cold DM template to clipboard">📋 Copy</button>
+            <h4>Urgent Dispatch SMS (Send First)</h4>
+            <button onclick="copyText('cold-dm')" class="btn btn-small" aria-label="Copy crew dispatch SMS to clipboard">📋 Copy</button>
           </div>
           <pre id="cold-dm" class="generated-text">{{ cold_dm }}</pre>
         </div>
 
         <div class="generated-box">
           <div class="generated-header">
-            <h4>Follow-up (Send after 4 days)</h4>
-            <button onclick="copyText('followup')" class="btn btn-small" aria-label="Copy follow-up DM template to clipboard">📋 Copy</button>
+            <h4>Follow-up Check-in (Send after 10 mins)</h4>
+            <button onclick="copyText('followup')" class="btn btn-small" aria-label="Copy follow-up dispatch check-in to clipboard">📋 Copy</button>
           </div>
           <pre id="followup" class="generated-text">{{ followup }}</pre>
         </div>
@@ -42,20 +42,20 @@
     </div>
 
     <div class="entries-list">
-      <h3>Past Outreach</h3>
+      <h3>Past Dispatches</h3>
       {% if past %}
         {% for item in past %}
           <div class="entry-card">
             <div class="entry-header">
-              <strong>{{ item.target_role }}</strong>
-              <span class="badge-tag">{{ item.target_company }}</span>
+              <strong>{{ item.incident_title }}</strong>
+              <span class="badge-tag">{{ item.target_team }}</span>
             </div>
             <small>{{ item.created_at.strftime('%d %b %Y') }}</small>
-            <pre class="past-post-text">{{ item.cold_dm[:150] }}...</pre>
+            <pre class="past-post-text">{{ item.dispatch_message[:150] }}...</pre>
           </div>
         {% endfor %}
       {% else %}
-        <p class="empty-msg">No outreach generated yet.</p>
+        <p class="empty-msg">No alerts dispatched yet.</p>
       {% endif %}
     </div>
   </div>
