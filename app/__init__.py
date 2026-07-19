@@ -54,7 +54,7 @@ def create_app():
         return dict(csrf_token=session.get("csrf_token", ""))
 
     # Session Cookie Security Configuration
-    app.config["SESSION_COOKIE_SECURE"] = not (app.config.get("TESTING") or os.getenv("FLASK_ENV") == "development")
+    app.config["SESSION_COOKIE_SECURE"] = True
     app.config["SESSION_COOKIE_HTTPONLY"] = True
     app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
 
@@ -67,6 +67,7 @@ def create_app():
         response.headers["X-Content-Type-Options"] = "nosniff"
         response.headers["X-XSS-Protection"] = "1; mode=block"
         response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+        response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains; preload"
         response.headers["Content-Security-Policy"] = (
             "default-src 'self'; "
             "script-src 'self' 'unsafe-inline'; "

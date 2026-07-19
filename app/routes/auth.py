@@ -21,6 +21,15 @@ def signup():
             flash("All fields are required.", "error")
             return render_template("signup.html")
 
+        import re
+        if not re.match(r"^[^@\s]+@[^@\s]+\.[^@\s]+$", email):
+            flash("Invalid email address format.", "error")
+            return render_template("signup.html")
+
+        if len(password) < 6:
+            flash("Password must be at least 6 characters long.", "error")
+            return render_template("signup.html")
+
         if User.query.filter_by(email=email).first():
             flash("Email already registered.", "error")
             return render_template("signup.html")

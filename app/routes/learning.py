@@ -36,8 +36,8 @@ def learn():
             resolution_progress = int(resolution_progress)
             response_time = float(response_time)
         except ValueError:
-            resolution_progress = 0
-            response_time = 0
+            flash("Progress and response time must be numeric values.", "error")
+            return redirect(url_for("learning.learn"))
 
         entry = OperationLog(
             user_id=current_user.id,
